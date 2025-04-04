@@ -106,7 +106,8 @@ class _LoginState extends State<Login> {
                     child: TextField(
                       controller: emailTypeIdController,
                       decoration: InputDecoration(
-                        labelText: '이메일 아이디를 입하세요.(*필수 입력)',
+                        prefixIcon: Icon(Icons.email),
+                        labelText: '이메일 아이디 입력( *필수 입력)',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -125,7 +126,8 @@ class _LoginState extends State<Login> {
                     child: TextField(
                       controller: passKeyController,
                       decoration: InputDecoration(
-                        labelText: '사용자 비밀번호를 입하세요.(*필수 입력)',
+                        prefixIcon: Icon(Icons.lock),
+                        labelText: '사용자 비밀번호 입력 (*필수 입력)',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
