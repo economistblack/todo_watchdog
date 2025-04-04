@@ -71,98 +71,107 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFF38BDF8),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Center(
-          child: Column(
-            children: [
-              SizedBox(height: 110),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        backgroundColor: Color(0xFF38BDF8),
+        body: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Center(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
                 children: [
-                  Image.asset('images/logo.png', width: 70, height: 70),
-                  SizedBox(width: 5),
-                  Text(
-                    'Make Myself Great Again!',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFF9FAFB),
+                  //SizedBox(height: 110),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset('images/logo.png', width: 70, height: 70),
+                      SizedBox(width: 5),
+                      Text(
+                        'Make Myself Great Again!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFF9FAFB),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: TextField(
+                      controller: emailTypeIdController,
+                      decoration: InputDecoration(
+                        labelText: '이메일 아이디를 입하세요.(*필수 입력)',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Color(0xFF334155)),
+                        ),
+                        filled: true,
+                        fillColor: Color(0xFFF9FAFB),
+                      ),
+                      keyboardType: TextInputType.text,
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: TextField(
+                      controller: passKeyController,
+                      decoration: InputDecoration(
+                        labelText: '사용자 비밀번호를 입하세요.(*필수 입력)',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Color(0xFF334155)),
+                        ),
+                        filled: true,
+                        fillColor: Color(0xFFF9FAFB),
+                      ),
+                      obscureText: true,
+                      keyboardType: TextInputType.text,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        // timer.cancel(); // 로그인 성공 시 들어가야 함
+                        // super.dispose();  // 로그인 성공 시 들어가야 함
+                        loginCheck();
+                        //Get.toNamed('/home');
+                      },
+                      icon: Icon(Icons.login),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFA3E635),
+                        foregroundColor: Color(0xFF334155),
+                        minimumSize: Size(150, 50),
+                        shape: ContinuousRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      label: Text(
+                        '로그인',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 90),
+                  Image.asset(bannerImage),
                 ],
               ),
-              SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: TextField(
-                  controller: emailTypeIdController,
-                  decoration: InputDecoration(
-                    labelText: '이메일 아이디를 입하세요.(*필수 입력)',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Color(0xFF334155)),
-                    ),
-                    filled: true,
-                    fillColor: Color(0xFFF9FAFB),
-                  ),
-                  keyboardType: TextInputType.text,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: TextField(
-                  controller: passKeyController,
-                  decoration: InputDecoration(
-                    labelText: '사용자 비밀번호를 입하세요.(*필수 입력)',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Color(0xFF334155)),
-                    ),
-                    filled: true,
-                    fillColor: Color(0xFFF9FAFB),
-                  ),
-                  obscureText: true,
-                  keyboardType: TextInputType.text,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    // timer.cancel(); // 로그인 성공 시 들어가야 함
-                    // super.dispose();  // 로그인 성공 시 들어가야 함
-                    loginCheck();
-                    //Get.toNamed('/home');
-                  },
-                  icon: Icon(Icons.login),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFA3E635),
-                    foregroundColor: Color(0xFF334155),
-                    minimumSize: Size(150, 50),
-                    shape: ContinuousRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  label: 
-                  Text(
-                    '로그인',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                  ),
-                  
-                ),
-              ),
-              SizedBox(height: 90),
-              Image.asset(bannerImage),
-            ],
+            ),
           ),
         ),
       ),
