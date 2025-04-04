@@ -1,24 +1,20 @@
 class UsersInfo {
+  int userNo;
   String emailTypeId;
   String passKey;
   late String userImage;
   late String userNickName;
-  late List<List<String>> userDb;
+  late List<List<dynamic>> userDb;
 
   UsersInfo({
+    required this.userNo,
     required this.emailTypeId,
     required this.passKey,
     this.userImage = '',
     this.userNickName = '',
   }) {
     userDb = [
-      [emailTypeId, passKey,userImage,userNickName]
+      [userNo, emailTypeId, passKey, userImage, userNickName],
     ];
   }
-
-  
-
-
-
-
 }

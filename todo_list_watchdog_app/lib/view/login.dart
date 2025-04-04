@@ -11,52 +11,59 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  late TextEditingController emailTypeIdController;   // eamil 형식의 ID 텍스트로 받는 값
-  late TextEditingController passKeyController;       // 비밀번호 텍스트로 받는 값
-  late String emailTypeId;                            // email 형식의 ID
-  late String passKey;                                // 비밀번호
-  late String bannerImage;                            // 로그인 페이지 하단 이미지 경로
-  late Timer timer;                                   // 로그인 페이지 하단 이미지 타이머
-  late RegExp emailRegex;                             // 이메일 정규식
-  late String loginInfo;                              // 로그인 실패시 표시되는 정보
-  late List<List<UsersInfo>> loginDb;                 // 사용자 정보가 들어간 DB 리스트
-  late bool emailTypeValid;                           // ID가 이메일 정규식과 일치하는지 여부의 구분 값
-
+  late TextEditingController emailTypeIdController; // eamil 형식의 ID 텍스트로 받는 값
+  late TextEditingController passKeyController; // 비밀번호 텍스트로 받는 값
+  late int userNo; // 로그인 사용자 고유 번호
+  late String emailTypeId; // email 형식의 ID
+  late String passKey; // 비밀번호
+  late String bannerImage; // 로그인 페이지 하단 이미지 경로
+  late Timer timer; // 로그인 페이지 하단 이미지 타이머
+  late RegExp emailRegex; // 이메일 정규식
+  late String loginInfo; // 로그인 실패시 표시되는 정보
+  late List<List<dynamic>> loginDb; // 사용자 정보가 들어간 DB 리스트
+  late bool emailTypeValid; // ID가 이메일 정규식과 일치하는지 여부의 구분 값
 
   @override
   void initState() {
     super.initState();
     emailTypeIdController = TextEditingController();
     passKeyController = TextEditingController();
+    userNo = 0;
     emailTypeId = '';
     passKey = '';
     bannerImage = 'images/frontbanner01.png';
     emailRegex = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
 
-    UsersInfo usersInfo = UsersInfo(emailTypeId: emailTypeId, passKey: passKey);
+    UsersInfo usersInfo = UsersInfo(
+      userNo: userNo,
+      emailTypeId: emailTypeId,
+      passKey: passKey,
+    );
     usersInfo.userDb = [
-      ['washington@gmail.com', '1234567', 'images/user01.png', 'George'],
-      ['lincoin@gmail.com', '1234567', 'images/user02.png', 'Abraham'],
-      ['roosevelt@gmail.com', '1234567', 'images/user03.png', 'Theodore'],
-      ['truman@gmail.com', '1234567', 'images/user04.png', 'HarryS'],
-      ['eisenhower@gmail.com', '1234567', 'images/user05.png', 'Dwight'],
-      ['kennedy@gmail.com', '1234567', 'images/user06.png', 'John'],
-      ['nixon@gmail.com', '1234567', 'images/user07.png', 'Richard'],
-      ['reagan@gmail.com', '1234567', 'images/user08.png', 'Ronald'],
-      ['bush@gmail.com', '1234567', 'images/user09.png', 'GeorgeW'],
-      ['obama@gmail.com', '1234567', 'images/user10.png', 'Barack'],
+      [1, 'washington@gmail.com', '1234567', 'images/user01.png', 'George'],
+      [2, 'lincoin@gmail.com', '1234567', 'images/user02.png', 'Abraham'],
+      [3, 'roosevelt@gmail.com', '1234567', 'images/user03.png', 'Theodore'],
+      [4, 'truman@gmail.com', '1234567', 'images/user04.png', 'HarryS'],
+      [5, 'eisenhower@gmail.com', '1234567', 'images/user05.png', 'Dwight'],
+      [6, 'kennedy@gmail.com', '1234567', 'images/user06.png', 'John'],
+      [7, 'nixon@gmail.com', '1234567', 'images/user07.png', 'Richard'],
+      [8, 'reagan@gmail.com', '1234567', 'images/user08.png', 'Ronald'],
+      [9, 'bush@gmail.com', '1234567', 'images/user09.png', 'GeorgeW'],
+      [10, 'obama@gmail.com', '1234567', 'images/user10.png', 'Barack'],
     ];
+
+    loginDb = usersInfo.userDb;
 
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       chagneBanner();
-    },);
+    });
   }
 
   // 로그인 페이지 하단 이미지 변경 함수
-  chagneBanner(){
-    if(bannerImage == 'images/frontbanner01.png'){
+  chagneBanner() {
+    if (bannerImage == 'images/frontbanner01.png') {
       bannerImage = 'images/frontbanner02.png';
-    }else if(bannerImage == 'images/frontbanner02.png'){
+    } else if (bannerImage == 'images/frontbanner02.png') {
       bannerImage = 'images/frontbanner01.png';
     }
     setState(() {});
@@ -71,32 +78,23 @@ class _LoginState extends State<Login> {
         child: Center(
           child: Column(
             children: [
-              SizedBox(
-                height: 110,
-              ),
+              SizedBox(height: 110),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'images/logo.png',
-                    width: 70,
-                    height: 70,
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text('Make Myself Great Again!',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFF9FAFB),
-                  ),
+                  Image.asset('images/logo.png', width: 70, height: 70),
+                  SizedBox(width: 5),
+                  Text(
+                    'Make Myself Great Again!',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFF9FAFB),
+                    ),
                   ),
                 ],
               ),
-              SizedBox(
-                height: 20,
-              ),
+              SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: TextField(
@@ -132,6 +130,7 @@ class _LoginState extends State<Login> {
                     filled: true,
                     fillColor: Color(0xFFF9FAFB),
                   ),
+                  obscureText: true,
                   keyboardType: TextInputType.text,
                 ),
               ),
@@ -148,63 +147,80 @@ class _LoginState extends State<Login> {
                     backgroundColor: Color(0xFFA3E635),
                     foregroundColor: Color(0xFF334155),
                     minimumSize: Size(150, 50),
-                  shape: ContinuousRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  ),
-                  child: Text('로그인',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
+                    shape: ContinuousRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
+                  ),
+                  child: Text(
+                    '로그인',
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-              SizedBox(
-                height: 90,
-              ),
-              Image.asset(
-                bannerImage,
-              ),
+              SizedBox(height: 90),
+              Image.asset(bannerImage),
             ],
           ),
         ),
-      )
+      ),
     );
   } // build
 
-  // 정규식 일치 및 로그인을 검증 후 'home'으로 이동하는 함수 
-
-  loginCheck(){
+  // 정규식 일치 및 로그인을 검증 후 'home'으로 이동하는 함수
+  loginCheck() {
     emailTypeValid = emailRegex.hasMatch(emailTypeIdController.text);
-    if(emailTypeIdController.text.trim().isEmpty || passKeyController.text.trim().isEmpty){
-      loginInfo = '아이디와 패스워드를 입력하세요!';
-    }else if(emailTypeValid == false){
+    bool errorIndex = false;
+
+    if (emailTypeIdController.text.trim().isEmpty ||
+        passKeyController.text.trim().isEmpty) {
+      (emailTypeValid == false && emailTypeIdController.text.isNotEmpty)
+          ? (loginInfo = '이메일 형식의 아이디를 입력하세요!')
+          : (loginInfo = '아이디와 패스워드를 입력하세요!');
+      errorIndex = true;
+      loginInfoSnack();
+    } else if (emailTypeValid == false &&
+        emailTypeIdController.text.isNotEmpty) {
       loginInfo = '이메일 형식의 아이디를 입력하세요!';
+      errorIndex = true;
+      loginInfoSnack();
+    }
+
+    bool loginSuccess = false;
+
+    for (int i = 0; i < loginDb.length; i++) {
+      if (loginDb[i][1] == emailTypeIdController.text &&
+          loginDb[i][2] == passKeyController.text) {
+        timer.cancel();
+        super.dispose();
+        Get.toNamed('/home');
+        loginSuccess = true;
+        break;
+      }
+    }
+
+    if (loginSuccess == false && errorIndex == false) {
+      loginInfo = '정확한 아이디와 패스워드를 입력하세요!';
       loginInfoSnack();
     }
   }
 
   // 로그인 실패 시 표시되는 스낵바 정보
-  loginInfoSnack(){
-    
+  loginInfoSnack() {
     Get.snackbar(
-      '', 
+      '',
       loginInfo,
       snackPosition: SnackPosition.BOTTOM,
       duration: Duration(seconds: 2),
       backgroundColor: Color(0xFFE9D5FF),
       colorText: Color(0xFF334155),
       titleText: Text(
-        '⚠️ 주의',
-      style: TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 18,
-      letterSpacing: 1.5,
-      ),
+        '⚠️ 알림',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+          letterSpacing: 1.5,
+        ),
       ),
     );
   }
-
-
 } // Class
