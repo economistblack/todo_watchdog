@@ -136,13 +136,14 @@ class _LoginState extends State<Login> {
               ),
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: ElevatedButton(
+                child: ElevatedButton.icon(
                   onPressed: () {
                     // timer.cancel(); // 로그인 성공 시 들어가야 함
                     // super.dispose();  // 로그인 성공 시 들어가야 함
                     loginCheck();
                     //Get.toNamed('/home');
                   },
+                  icon: Icon(Icons.login),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFA3E635),
                     foregroundColor: Color(0xFF334155),
@@ -151,10 +152,12 @@ class _LoginState extends State<Login> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: Text(
+                  label: 
+                  Text(
                     '로그인',
                     style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                   ),
+                  
                 ),
               ),
               SizedBox(height: 90),
