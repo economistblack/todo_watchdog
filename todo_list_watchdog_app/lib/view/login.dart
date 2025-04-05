@@ -39,20 +39,9 @@ class _LoginState extends State<Login> {
       emailTypeId: emailTypeId,
       passKey: passKey,
     );
-    usersInfo.userDb = [
-      [1, 'washington@gmail.com', '1234567', 'images/user01.png', 'George'],
-      [2, 'lincoin@gmail.com', '1234567', 'images/user02.png', 'Abraham'],
-      [3, 'roosevelt@gmail.com', '1234567', 'images/user03.png', 'Theodore'],
-      [4, 'truman@gmail.com', '1234567', 'images/user04.png', 'HarryS'],
-      [5, 'eisenhower@gmail.com', '1234567', 'images/user05.png', 'Dwight'],
-      [6, 'kennedy@gmail.com', '1234567', 'images/user06.png', 'John'],
-      [7, 'nixon@gmail.com', '1234567', 'images/user07.png', 'Richard'],
-      [8, 'reagan@gmail.com', '1234567', 'images/user08.png', 'Ronald'],
-      [9, 'bush@gmail.com', '1234567', 'images/user09.png', 'GeorgeW'],
-      [10, 'obama@gmail.com', '1234567', 'images/user10.png', 'Barack'],
-    ];
 
     loginDb = usersInfo.userDb;
+
 
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       chagneBanner();
@@ -206,7 +195,9 @@ class _LoginState extends State<Login> {
           loginDb[i][2] == passKeyController.text) {
         timer.cancel();
         super.dispose();
-        Get.toNamed('/home');
+        Get.toNamed('/home',
+        arguments: [loginDb[i][0]],
+        );
         loginSuccess = true;
         break;
       }

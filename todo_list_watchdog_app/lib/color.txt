@@ -1,0 +1,5 @@
+Sky Blue : 0xFF38BDF8
+Fresh Lime : 0xFFA3E635
+Snow White : 0xFFF9FAFB
+Slate Gray : 0xFF334155
+Soft Lavender : 0xFFE9D5FF

@@ -23,6 +23,8 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: '/home', 
           page: () => Home(),
+          transition: Transition.circularReveal,
+          transitionDuration: Duration(seconds: 1),
           ),
       ],
     );
