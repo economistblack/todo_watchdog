@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:todo_list_watchdog_app/model/todolist.dart';
 import 'package:todo_list_watchdog_app/model/users_info.dart';
@@ -75,10 +76,11 @@ class _PrivateToDoState extends State<PrivateToDo> {
         privateToDoList.add(todoDb[i]);
         // print(privateToDoList);
         // print(privateToDoList.length);
-      } else {
+      } 
+    }
+      if (privateToDoList.isEmpty)  {
         addMessage = '일정을 추가하세요!';
       }
-    }
     
   }
 
@@ -191,25 +193,53 @@ class _PrivateToDoState extends State<PrivateToDo> {
               itemCount: privateToDoList.length,
               itemBuilder: (context, index) {
                 return SizedBox(
-                  height: 120,
+                  height: 135,
                   child: Card(
                     color: (index % 2 == 0) ? Color(0xFF38BDF8) : Color(0xFFE9D5FF),
                     child: Row(
                       children: [
-                        Icon(Icons.calendar_month),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Icon(
+                            Icons.lock,
+                            color: Color(0xFF334155),
+                            size: 35,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            width: 270,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('날짜: ${privateToDoList[index][2]}'),
+                                Text('시간: ${privateToDoList[index][3]} - ${privateToDoList[index][4]}'),
+                                Text('장소: ${privateToDoList[index][5]}'),
+                                Text('제목: ${privateToDoList[index][6]}'),
+                                Text(
+                                  '내용: ${getLimitedText(index,privateToDoList[index][7], 25)}',
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('날짜: ${privateToDoList[index][2]}'),
-                            Text('시간: ${privateToDoList[index][3]} - ${privateToDoList[index][4]}'),
-                            Text('장소: ${privateToDoList[index][5]}'),
-                            Text('제목: ${privateToDoList[index][6]}'),
-                            Text(
-                              '내용: ${getLimitedText(index,privateToDoList[index][7], 20)}',
-                              maxLines: 1,
-                              
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Icon(
+                                Icons.edit,
                               ),
-
+                            ),
+                            SizedBox(
+                              height: 50,
+                            ),
+                            Icon(
+                              FontAwesomeIcons.fire,
+                              color: Color(0xFFF9FAFB),
+                              size: 15,
+                            ),
                           ],
                         ),
                       ],
