@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
-import 'package:todo_list_watchdog_app/method/users_info.dart';
+import 'package:todo_list_watchdog_app/model/todolist.dart';
+import 'package:todo_list_watchdog_app/model/users_info.dart';
 
 class PrivateToDo extends StatefulWidget {
   const PrivateToDo({super.key});
@@ -16,6 +18,20 @@ class _PrivateToDoState extends State<PrivateToDo> {
   late String passKey;  // 사용자 비밀번호
   late String profileImage; // 사용자가 선택한 프로파일 이미지
   late String nickName; // 사용자가 선택한 닉네임
+  late int listNo; // todo 리스트 고유 번호
+  String? date; // todo 리스트 날짜
+  String? startTime; // todo 리스트 시작 시간
+  String? endTime; // todo 리스트 끝나는 시간
+  late String location; // todo 리스트 장소
+  late String todoTitle; // todo 리스트 제목
+  late String contentToDo; // todo 리스트 내용
+  late int importance;  // todo 리스트 중요도
+  late bool isPrivate;  // true가 기본 값이고 true 이면 프라이빗 todo 리스트임
+  late List<int> friendsList; // 친구 리스트
+  late List<List<dynamic>> todoDb; // todo 리스트 전체
+  late bool switchValue; // false가 기본 값이고 
+  late List<List<dynamic>> privateToDoList; // 프라이빗 todo 리스트만 저장된 공간
+  late String addMessage;
 
   @override
   void initState() {
@@ -24,6 +40,18 @@ class _PrivateToDoState extends State<PrivateToDo> {
     passKey = '';
     profileImage = '';
     nickName = '';
+    listNo = 0;
+    location = '';
+    todoTitle = '';
+    contentToDo = '';
+    importance = 0;
+    isPrivate = true;
+    friendsList = [];
+    switchValue = false;
+    privateToDoList = [];
+    addMessage = '';
+    
+    print(userIndex);
 
     UsersInfo usersInfo = UsersInfo(
       userNo: userIndex,
@@ -31,8 +59,27 @@ class _PrivateToDoState extends State<PrivateToDo> {
       passKey: passKey,
     );
 
+    TodoList todoList = TodoList(userNo: userIndex, listNo: listNo, date: date, 
+    startTime: startTime, endTime: endTime, location: location, 
+    todoTitle: todoTitle, contentToDo: contentToDo, importance: importance, 
+    isPrivate: isPrivate, friendsList: friendsList);
+
     profileImage = usersInfo.userDb[userIndex][3];
     nickName = usersInfo.userDb[userIndex][4];
+    todoDb = todoList.listDb;
+    
+    // print('${todoDb[0][2]}');
+    // print(todoDb);
+    for(int i = 0; i < todoDb.length; i++){
+      if(todoDb[i][9] == true && todoDb[i][0] == userIndex){
+        privateToDoList.add(todoDb[i]);
+        // print(privateToDoList);
+        // print(privateToDoList.length);
+      } else {
+        addMessage = '일정을 추가하세요!';
+      }
+    }
+    
   }
 
   @override
@@ -92,9 +139,98 @@ class _PrivateToDoState extends State<PrivateToDo> {
             child: Divider(
               color: Color(0xFFA3E635),
             ),
-          )
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text('최신일정',
+                style: TextStyle(
+                  color: Color(0xFF38BDF8),
+                  fontWeight: FontWeight.bold,
+                ),
+                ),
+              ),
+              FlutterSwitch(
+                value: switchValue,
+                activeColor: Color(0xFFA3E635),
+                inactiveColor: Color(0xFF38BDF8),
+                toggleSize: 20,
+                onToggle: (value) {
+                  switchValue = value;
+                  // 필터 함수 만들어야 함
+                },),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text('우선순위', 
+                  style: TextStyle(
+                    color: Color(0xFFA3E635),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  ),
+                )
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              addMessage, 
+              style: TextStyle(
+                fontSize: 20,
+                fontStyle: FontStyle.italic,
+                color: Color(0xFF334155),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: privateToDoList.length,
+              itemBuilder: (context, index) {
+                return SizedBox(
+                  height: 120,
+                  child: Card(
+                    color: (index % 2 == 0) ? Color(0xFF38BDF8) : Color(0xFFE9D5FF),
+                    child: Row(
+                      children: [
+                        Icon(Icons.calendar_month),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('날짜: ${privateToDoList[index][2]}'),
+                            Text('시간: ${privateToDoList[index][3]} - ${privateToDoList[index][4]}'),
+                            Text('장소: ${privateToDoList[index][5]}'),
+                            Text('제목: ${privateToDoList[index][6]}'),
+                            Text(
+                              '내용: ${getLimitedText(index,privateToDoList[index][7], 20)}',
+                              maxLines: 1,
+                              
+                              ),
+
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }, 
+              
+              ),
+          ),
         ],
       ),
     );
+  } // build
+  String getLimitedText(int index, String content, int charater){
+    String content = '';
+    (privateToDoList[index][7].toString().length > 20) ? 
+    content = privateToDoList[index][7].toString().substring(0, charater) 
+    :
+    content = privateToDoList[index][7].toString();
+
+    return '$content...';
   }
-}
+} // Class

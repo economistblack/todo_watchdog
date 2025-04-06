@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:todo_list_watchdog_app/method/users_info.dart';
+import 'package:todo_list_watchdog_app/model/users_info.dart';
 import 'package:get/get.dart';
 
 class Login extends StatefulWidget {
