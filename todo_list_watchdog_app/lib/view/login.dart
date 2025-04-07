@@ -22,6 +22,8 @@ class _LoginState extends State<Login> {
   late String loginInfo; // 로그인 실패시 표시되는 정보
   late List<List<dynamic>> loginDb; // 사용자 정보가 들어간 DB 리스트
   late bool emailTypeValid; // ID가 이메일 정규식과 일치하는지 여부의 구분 값
+  
+  
 
   @override
   void initState() {

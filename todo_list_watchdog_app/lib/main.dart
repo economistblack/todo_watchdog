@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:todo_list_watchdog_app/home.dart';
+import 'package:todo_list_watchdog_app/view/addtodo.dart';
 import 'package:todo_list_watchdog_app/view/login.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -14,6 +17,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Flutter Demo',
+
+    localizationsDelegates: [
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate
+    ],
       theme: ThemeData(
         
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -24,6 +33,12 @@ class MyApp extends StatelessWidget {
           name: '/home', 
           page: () => Home(),
           transition: Transition.circularReveal,
+          transitionDuration: Duration(seconds: 1),
+          ),
+        GetPage(
+          name: '/addtodo', 
+          page: () => AddToDo(),
+          transition: Transition.fade,
           transitionDuration: Duration(seconds: 1),
           ),
       ],

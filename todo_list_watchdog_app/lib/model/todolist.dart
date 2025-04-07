@@ -1,16 +1,17 @@
 class TodoList {
-  int userNo; // 사용자 고유 번호
-  int listNo; // ToDo 리스트 고유 번호
+  final int userNo; // 사용자 고유 번호
+  final int listNo; // ToDo 리스트 고유 번호
   String? date; // 날짜
   String? startTime; // 시작 시간
   String? endTime; // 끝나는 시간
   String location; // 장소
-  String todoTitle;
+  String todoTitle; // 해야할 일 제목
   String contentToDo; // 해야할 일
   int importance; // 중요도
   bool isPrivate; // 프라이빗 리스트 여부, 초기값은 true
   List<int> friendsList; // 친구의 사용자 고유 번호가 포함된
   late List<List<dynamic>> listDb; // todo 일정 리스트
+  late List<List<dynamic>> aadListDb; // todo 일정 추가를 위한 리스트
 
   TodoList({
     required this.userNo,
@@ -41,6 +42,7 @@ class TodoList {
         friendsList,
       ],
     ];
+    
     listDb = [
       [
         9,

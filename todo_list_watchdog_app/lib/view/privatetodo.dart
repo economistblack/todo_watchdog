@@ -36,7 +36,9 @@ class _PrivateToDoState extends State<PrivateToDo> {
   late IconData? importanceIcon01; // 중요도 아이콘 01
   late IconData? importanceIcon02; // 중요도 아이콘 01
   late IconData? importanceIcon03; // 중요도 아이콘 01
-  late Color importanceColor;
+  late Color importanceColor; // 중요도 아이콘 색
+  late String earliestScheduleContent; // 상단에 가장 빠른 일정 내용
+
 
   @override
   void initState() {
@@ -59,6 +61,8 @@ class _PrivateToDoState extends State<PrivateToDo> {
     importanceIcon02 = null;
     importanceIcon03 = null;
     importanceColor = Colors.white;
+    earliestScheduleContent = '';
+    
 
     print(userIndex);
 
@@ -100,6 +104,8 @@ class _PrivateToDoState extends State<PrivateToDo> {
     if (privateToDoList.isEmpty) {
       addMessage = '일정을 추가하세요!';
     }
+
+    earliestScheduleMessage();
   } // initState()
 
   // Card에 중요도 아이콘과 색을 표시하는 함수
@@ -121,14 +127,36 @@ class _PrivateToDoState extends State<PrivateToDo> {
                   height: 100,
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.alarm_add_outlined,
-                        size: 40,
-                        color: Color(0xFF38BDF8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Image.asset(
+                            'images/schedule_logo.png',
+                            width: 70,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Text('빠른 일정'),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 7,
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Text('data'),
+                        padding: const EdgeInsets.all(5.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              earliestScheduleContent, 
+                              style: TextStyle(
+                                color: Color(0xFF334155),
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -185,6 +213,15 @@ class _PrivateToDoState extends State<PrivateToDo> {
                 toggleSize: 20,
                 onToggle: (value) {
                   switchValue = value;
+                  if (switchValue == false) {
+                  // 최신일정순 정렬 (날짜 오름차순)
+                  privateToDoList.sort((a, b) =>
+                  DateTime.parse(a[2]).compareTo(DateTime.parse(b[2])));
+                  } else {
+                  // 우선순위순 정렬 (중요도 높은 순)
+                  privateToDoList.sort((a, b) => b[8].compareTo(a[8]));
+                  }
+                  setState(() {});
                   // 필터 함수 만들어야 함
                 },
               ),
@@ -194,6 +231,29 @@ class _PrivateToDoState extends State<PrivateToDo> {
                   '우선순위',
                   style: TextStyle(
                     color: Color(0xFFA3E635),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 40,
+              ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Get.toNamed('/addtodo',
+                  arguments: [userIndex]);
+                }, 
+                icon: Icon(Icons.add),
+                style: ElevatedButton.styleFrom(
+                  shape: ContinuousRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)
+                  ),
+                backgroundColor: Color(0xFFE9D5FF),
+                shadowColor: Colors.black54,
+                ),
+                label: Text(
+                  '일정 추가',
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -218,75 +278,93 @@ class _PrivateToDoState extends State<PrivateToDo> {
               itemCount: privateToDoList.length,
               itemBuilder: (context, index) {
                 importanceCheck(index);
-                return SizedBox(
-                  height: 135,
-                  child: Card(
-                    color:
-                        (index % 2 == 0)
-                            ? Color(0xFFA3E635)
-                            : Color(0xFFE9D5FF),
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Icon(
-                            Icons.lock,
-                            color: Color(0xFF334155),
-                            size: 35,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            width: 250,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('날짜: ${privateToDoList[index][2]}'),
-                                Text(
-                                  '시간: ${privateToDoList[index][3]} - ${privateToDoList[index][4]}',
-                                ),
-                                Text('장소: ${privateToDoList[index][5]}'),
-                                Text('제목: ${privateToDoList[index][6]}'),
-                                Text(
-                                  '내용: ${getLimitedText(index, privateToDoList[index][7], 20)}',
-                                ),
-                              ],
+                return Dismissible(
+                  direction: DismissDirection.endToStart,
+                  key: ValueKey(privateToDoList[index]),
+                  onDismissed: (direction) {
+                    privateToDoList.remove(privateToDoList[index]);
+                    setState(() {});
+                  },
+                  background: Container(
+                    color: Colors.red[300],
+                    alignment: Alignment.centerRight,
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                  
+                    child: Icon(
+                      Icons.delete_forever,
+                      size: 70,
+                    ),
+                  ),
+                  child: SizedBox(
+                    height: 135,
+                    child: Card(
+                      color:
+                          (index % 2 == 0)
+                              ? Color(0xFFA3E635)
+                              : Color(0xFFE9D5FF),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Icon(
+                              Icons.lock,
+                              color: Color(0xFF334155),
+                              size: 40,
                             ),
                           ),
-                        ),
-                        Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Icon(Icons.edit),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              width: 250,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('날짜: ${privateToDoList[index][2]}'),
+                                  Text(
+                                    '시간: ${privateToDoList[index][3]} - ${privateToDoList[index][4]}',
+                                  ),
+                                  Text('장소: ${privateToDoList[index][5]}'),
+                                  Text('제목: ${privateToDoList[index][6]}'),
+                                  Text(
+                                    '내용: ${getLimitedText(index, privateToDoList[index][7], 20)}',
+                                  ),
+                                ],
+                              ),
                             ),
-                            SizedBox(height: 50),
-                            Row(
-                              children: [
-                                Icon(
-                                  importanceIcon01,
-                                  //FontAwesomeIcons.fire,
-                                  color: importanceColor,
-                                  size: 15,
-                                ),
-                                Icon(
-                                  importanceIcon02,
-                                  //FontAwesomeIcons.fire,
-                                  color: importanceColor,
-                                  size: 15,
-                                ),
-                                Icon(
-                                  importanceIcon03,
-                                  //FontAwesomeIcons.fire,
-                                  color: importanceColor,
-                                  size: 15,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
+                          ),
+                          Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Icon(Icons.edit),
+                              ),
+                              SizedBox(height: 50),
+                              Row(
+                                children: [
+                                  Icon(
+                                    importanceIcon01,
+                                    //FontAwesomeIcons.fire,
+                                    color: importanceColor,
+                                    size: 15,
+                                  ),
+                                  Icon(
+                                    importanceIcon02,
+                                    //FontAwesomeIcons.fire,
+                                    color: importanceColor,
+                                    size: 15,
+                                  ),
+                                  Icon(
+                                    importanceIcon03,
+                                    //FontAwesomeIcons.fire,
+                                    color: importanceColor,
+                                    size: 15,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -308,6 +386,7 @@ class _PrivateToDoState extends State<PrivateToDo> {
     return '$content...';
   }
 
+  // 아이콘 중요도 삽입 및 색 변경
   importanceCheck(int index) {
   // 모든 아이콘을 먼저 null로 초기화
   importanceIcon01 = null;
@@ -330,4 +409,23 @@ class _PrivateToDoState extends State<PrivateToDo> {
     importanceColor = Colors.red;
   }
 }
+
+  // 상단에 보여주는 가장 빠른 일정을 알리는 메시지
+  earliestScheduleMessage(){
+    DateTime date;
+    DateTime? earliestDate;
+    int? earliestIndex;
+
+    for (int i =0 ; i < privateToDoList.length; i++){
+      date = DateTime.parse(privateToDoList[i][2]);
+      
+      if (earliestDate == null || date.isBefore(earliestDate)){
+        earliestDate = date;
+        earliestIndex = i;
+      }
+      if (earliestIndex != null){
+        earliestScheduleContent = ' 날짜 : ${privateToDoList[earliestIndex][2]}\n 시간 : ${privateToDoList[earliestIndex][3]}\n 확인하세요!';
+      }
+    }
+  }
 } // Class

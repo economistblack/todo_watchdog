@@ -1,6 +1,6 @@
 class UsersInfo {
-  int userNo;
-  String emailTypeId;
+  final int userNo;
+  final String emailTypeId;
   String passKey;
   late String userImage;
   late String userNickName;
