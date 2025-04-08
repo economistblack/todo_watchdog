@@ -17,23 +17,18 @@ class _AddToDoState extends State<AddToDo> {
   late String profileImage; // 사용자가 선택한 프로파일 이미지
   late String nickName; // 사용자가 선택한 닉네임
   late int listNo; // todo 리스트 고유 번호
-  String? date; // todo 리스트 날짜
-  String? startTime; // todo 리스트 시작 시간
-  String? endTime; // todo 리스트 끝나는 시간
-  late String location; // todo 리스트 장소
-  late String todoTitle; // todo 리스트 제목
-  late String contentToDo; // todo 리스트 내용
   late int importance; // todo 리스트 중요도
   late bool isPrivate; // true가 기본 값이고 true 이면 프라이빗 todo 리스트임
   late List<int> friendsList; // 친구 리스트
-  late List<List<dynamic>> todoDb; // todo 리스트 전체
   late DateTime dateTime; // 현재 날짜
   late String selectedDateText; // 선택된 날짜
   late String selectedStartTimeText; // 선택된 시작 시간
   late String selectedEndTimeText; // 선택된 끝나는 시간
   late TextEditingController locationController; // todo 리스트 장소 입력
   late TextEditingController todoTitleController; // todo 리스트 제목
-  late TextEditingController contentToDoController;
+  late TextEditingController contentToDoController; // todo 리스트 내용
+  late int radioImportance; // 중요도 라디오 인덱스 낮음이 기본값
+  late int radioIsPrivate; // 프라이빗 여부 라디오 인덱스 프라이빗이 기본값
 
   @override
   void initState() {
@@ -42,11 +37,8 @@ class _AddToDoState extends State<AddToDo> {
     passKey = '';
     profileImage = '';
     nickName = '';
-    listNo = DateTime.now().microsecondsSinceEpoch;
-    location = '';
-    todoTitle = '';
-    contentToDo = '';
-    importance = 0;
+    listNo = 0;
+    importance = 1;
     isPrivate = true;
     friendsList = [];
     dateTime = DateTime.now();
@@ -56,6 +48,8 @@ class _AddToDoState extends State<AddToDo> {
     locationController = TextEditingController();
     todoTitleController = TextEditingController();
     contentToDoController = TextEditingController();
+    radioImportance = 0; 
+    radioIsPrivate = 0;
 
     UsersInfo usersInfo = UsersInfo(
       userNo: userIndex,
@@ -63,269 +57,329 @@ class _AddToDoState extends State<AddToDo> {
       passKey: passKey,
     );
 
-    TodoList todoList = TodoList(
-      userNo: userIndex,
-      listNo: listNo,
-      date: date,
-      startTime: startTime,
-      endTime: endTime,
-      location: location,
-      todoTitle: todoTitle,
-      contentToDo: contentToDo,
-      importance: importance,
-      isPrivate: isPrivate,
-      friendsList: friendsList,
-    );
-
     profileImage = usersInfo.userDb[userIndex][3];
     nickName = usersInfo.userDb[userIndex][4];
-    todoDb = todoList.listDb;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFF9FAFB),
-      body: Center(
-        child: Column(
-          children: [
-            SizedBox(height: 70),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Column(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        backgroundColor: Color(0xFFF9FAFB),
+        body: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              children: [
+                SizedBox(height: 70),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Color(0xFF334155),
-                            width: 2.0,
-                          ),
-                        ),
-                        child: CircleAvatar(
-                          radius: 45,
-                          backgroundColor: Color(0xFF38BDF8),
-                          child: ClipOval(
-                            child: Image.asset(
-                              profileImage,
-                              fit: BoxFit.contain,
+                      Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Color(0xFF334155),
+                                width: 2.0,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              radius: 45,
+                              backgroundColor: Color(0xFF38BDF8),
+                              child: ClipOval(
+                                child: Image.asset(
+                                  profileImage,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Text(nickName),
+                          ),
+                        ],
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Text(nickName),
+                        padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.campaign,
+                              color: Color(0xFF38BDF8),
+                              size: 40,
+                            ),
+                            SizedBox(width: 20),
+                            Text(
+                              '"일정을 추가하세요!"',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF38BDF8),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                    child: Row(
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                  child: Divider(color: Color(0xFFA3E635)),
+                ),
+                SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Center(
+                    child: Column(
                       children: [
-                        Icon(
-                          Icons.campaign,
-                          color: Color(0xFF38BDF8),
-                          size: 40,
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                disDatePicker();
+                              },
+                              child: Image.asset(
+                                'images/datepicker.png',
+                                width: 30,
+                                height: 30,
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Text('날짜 : $selectedDateText'),
+                          ],
                         ),
-                        SizedBox(width: 20),
-                        Text(
-                          '"일정을 추가하세요!"',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF38BDF8),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+                          child: Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () async {
+                                  String? time = await disTimePicker(context);
+                                  if (time != null) {
+                                    selectedStartTimeText = time;
+                                    setState(() {});
+                                  }
+                                },
+                                child: Icon(Icons.access_time, size: 30),
+                              ),
+                              SizedBox(width: 10),
+                              Text(selectedStartTimeText),
+                            ],
                           ),
+                        ),
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                String? time = await disTimePicker(context);
+                                if (time != null) {
+                                  selectedEndTimeText = time;
+                                  setState(() {});
+                                }
+                              },
+                              child: Icon(Icons.access_time, size: 30),
+                            ),
+                            SizedBox(width: 10),
+                            Text(selectedEndTimeText),
+                          ],
+                        ),
+                        SizedBox(height: 30, child: Divider()),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              color: Colors.red,
+                              size: 30,
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                controller: locationController,
+                                maxLength: 20,
+                                decoration: InputDecoration(
+                                  labelText: '장소를 입력하세요. (최대 20자)',
+                                  labelStyle: TextStyle(fontSize: 13),
+                                ),
+                                keyboardType: TextInputType.text,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.draw,
+                              color: Color(0xFF38BDF8),
+                              size: 30,
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                controller: todoTitleController,
+                                maxLength: 20,
+                                decoration: InputDecoration(
+                                  labelText: '제목을 입력하세요. (최대 20자)',
+                                  labelStyle: TextStyle(fontSize: 13),
+                                ),
+                                keyboardType: TextInputType.text,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.menu_book,
+                              color: Color(0xFF38BDF8),
+                              size: 30,
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                controller: contentToDoController,
+                                maxLength: 30,
+                                decoration: InputDecoration(
+                                  labelText: '내용을 입력하세요. (최대 30자)',
+                                  labelStyle: TextStyle(fontSize: 13),
+                                ),
+                                keyboardType: TextInputType.text,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 30, child: Divider()),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                              child: Icon(Icons.priority_high, color: Colors.red, size: 25),
+                            ),
+                            Text(
+                              '우선순위 :',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Radio(
+                              value: 0,
+                              groupValue: radioImportance,
+                              onChanged: (value) {
+                                importanceValue(value);
+                              },
+                            ),
+                            Text('낮음'),
+                            Radio(
+                              value: 1,
+                              groupValue: radioImportance,
+                              onChanged: (value) {
+                                importanceValue(value);
+                              },
+                            ),
+                            Text('보통'),
+                            Radio(
+                              value: 2,
+                              groupValue: radioImportance,
+                              onChanged: (value) {
+                                importanceValue(value);
+                              },
+                            ),
+                            Text('높음'),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                              child: Icon(Icons.lock, color: Color(0xFF334155), size: 25),
+                            ),
+                            Text(
+                              '일정 노출 :',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Radio(
+                              value: 0,
+                              groupValue: radioIsPrivate,
+                              onChanged: (value) {
+                                isPrivateValue(value);
+                              },
+                            ),
+                            Text('프라이빗'),
+                            Radio(
+                              value: 1,
+                              groupValue: radioIsPrivate,
+                              onChanged: (value) {
+                                isPrivateValue(value);
+                              },
+                            ),
+                            Text('퍼블릭'),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton.icon(
+                                icon: Icon(
+                                  Icons.cancel,
+                                  color: Colors.white,
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  shape: ContinuousRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),                     
+                                  ),
+                                  backgroundColor: Color(0xFF334155),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }, 
+                                label: Text('취소',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                ),
+                                ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton.icon(
+                                icon: Icon(
+                                  Icons.done,
+                                  color: Colors.white,
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  shape: ContinuousRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),                     
+                                  ),
+                                  backgroundColor: Color(0xFF38BDF8),
+                                ),
+                                onPressed: () {
+                                  addToDoList();
+                                }, 
+                                label: Text('등록',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                ),
+                                ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-              child: Divider(color: Color(0xFFA3E635)),
-            ),
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Center(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            disDatePicker();
-                          },
-                          child: Image.asset(
-                            'images/datepicker.png',
-                            width: 30,
-                            height: 30,
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Text('날짜 : $selectedDateText'),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              String? time = await disTimePicker(context);
-                              if (time != null) {
-                                selectedStartTimeText = '시작 시간 : $time';
-                                setState(() {});
-                              }
-                            },
-                            child: Icon(
-                              Icons.access_time,
-                              size: 30,
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          Text(selectedStartTimeText),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            String? time = await disTimePicker(context);
-                            if (time != null) {
-                              selectedEndTimeText = '끝나는 시간 : $time';
-                              setState(() {});
-                            }
-                          },
-                          child: Icon(
-                            Icons.access_time,
-                            size: 30,
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Text(selectedEndTimeText),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 30,
-                      child: Divider(
-
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            String? time = await disTimePicker(context);
-                            if (time != null) {
-                              selectedEndTimeText = '끝나는 시간 : $time';
-                              setState(() {});
-                            }
-                          },
-                          child: Icon(
-                            Icons.location_on,
-                            color: Colors.red,
-                            size: 30,
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: TextField(
-                            controller: locationController,
-                            maxLength: 20,
-                            decoration: InputDecoration(
-                              labelText: '장소를 입력하세요. (최대 20자)',
-                              labelStyle: TextStyle(
-                                fontSize: 13,
-                              ),
-                            ),
-                            keyboardType:  TextInputType.text,
-                          ),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            String? time = await disTimePicker(context);
-                            if (time != null) {
-                              selectedEndTimeText = '끝나는 시간 : $time';
-                              setState(() {});
-                            }
-                          },
-                          child: Icon(
-                            Icons.draw,
-                            color: Color(0xFF38BDF8),
-                            size: 30,
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: TextField(
-                            controller: todoTitleController,
-                            maxLength: 20,
-                            decoration: InputDecoration(
-                              labelText: '제목을 입력하세요. (최대 20자)',
-                              labelStyle: TextStyle(
-                                fontSize: 13,
-                              ),
-                            ),
-                            keyboardType:  TextInputType.text,
-                          ),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            String? time = await disTimePicker(context);
-                            if (time != null) {
-                              selectedEndTimeText = '끝나는 시간 : $time';
-                              setState(() {});
-                            }
-                          },
-                          child: Icon(
-                            Icons.menu_book,
-                            color: Color(0xFF38BDF8),
-                            size: 30,
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: TextField(
-                            controller: contentToDoController,
-                            maxLength: 30,
-                            decoration: InputDecoration(
-                              labelText: '내용을 입력하세요. (최대 30자)',
-                              labelStyle: TextStyle(
-                                fontSize: 13,
-                              ),
-                            ),
-                            keyboardType:  TextInputType.text,
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 30,
-                      child: Divider(
-                      ),
-                    ),
-                  ],
                 ),
-              ),
+              ],
             ),
-            
-          ],
+          ),
         ),
       ),
     );
@@ -363,28 +417,86 @@ class _AddToDoState extends State<AddToDo> {
     }
   }
 
+  // 시간을 선택하는 함수
   Future<String?> disTimePicker(BuildContext context) async {
   final TimeOfDay? picked = await showTimePicker(
     context: context,
-    initialTime: TimeOfDay(hour: 12, minute: 0),
+    initialTime: TimeOfDay(hour: 24, minute: 0),
     initialEntryMode: TimePickerEntryMode.input,
-                
     builder: (context, child) {
-      return MediaQuery(
-        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), 
-        child: child!,
+      return Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: ColorScheme.light(
+            primary: Color(0xFF334155), // 선택된 색상
+            onPrimary: Colors.white, // 선택된 텍스트 색
+            surface: Color(0xFF38BDF8), // 배경색
+            onSurface: Color(0xFF334155), // 일반 텍스트 색
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: Color(0xFF334155), // 확인, 취소 버튼 색
+            ),
+          ),
+        ),
+        child: MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            alwaysUse24HourFormat: true,
+          ),
+          child: Localizations.override(
+            context: context,
+            locale: const Locale('ko', 'KR'), // ✅ 한국어 설정
+            child: child!,
+          ),
+        ),
       );
     },
   );
+    if (picked != null) {
+      final hour = picked.hour.toString().padLeft(2, '0');
+      final minute = picked.minute.toString().padLeft(2, '0');
+      return '$hour:$minute';
+    }
 
-  if (picked != null) {
-    final hour = picked.hour.toString().padLeft(2, '0');
-    final minute = picked.minute.toString().padLeft(2, '0');
-    return '$hour:$minute'; // 결과 예: "13:05"
+    return null; // 취소한 경우
   }
 
-  return null; // 취소한 경우
-}
+  // 중요도를 입력 함수
+  importanceValue(int? value) {
+    radioImportance = value!;
+    importance = radioImportance + importance;
+    print(importance);
+    setState(() {});
+  }
 
+  // 일정공개 타입 선택 함수
+  isPrivateValue(int? value){
+    radioIsPrivate = value!;
+    if(radioIsPrivate == 0){
+      isPrivate = true;
+    } else {
+      isPrivate = false;
+    }
+    setState(() {});
+  }
 
+  // todo 리스트 추가 버튼
+  addToDoList(){
+    TodoList todoList = TodoList(
+      userNo: userIndex, 
+      listNo: DateTime.now().microsecondsSinceEpoch, 
+      date: selectedDateText, 
+      startTime: selectedStartTimeText, 
+      endTime: selectedEndTimeText, 
+      location: locationController.text, 
+      todoTitle: todoTitleController.text, 
+      contentToDo: contentToDoController.text, 
+      importance: importance, 
+      isPrivate: isPrivate, 
+      friendsList: friendsList
+      );
+    TodoList.listDb.add(todoList);
+    Navigator.pop(context);
+  }
+
+  
 } // Class

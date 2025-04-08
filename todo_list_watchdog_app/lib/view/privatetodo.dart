@@ -28,16 +28,17 @@ class _PrivateToDoState extends State<PrivateToDo> {
   late String contentToDo; // todo 리스트 내용
   late int importance; // todo 리스트 중요도
   late bool isPrivate; // true가 기본 값이고 true 이면 프라이빗 todo 리스트임
-  late List<int> friendsList; // 친구 리스트
-  late List<List<dynamic>> todoDb; // todo 리스트 전체
+  List<int> friendsList = []; // 친구 리스트
+  List<TodoList> todoDb = []; // todo 리스트 전체
   late bool switchValue; // false가 기본 값이고
-  late List<List<dynamic>> privateToDoList; // 프라이빗 todo 리스트만 저장된 공간
+  List<TodoList> privateToDoList = []; // 프라이빗 todo 리스트만 저장된 공간
   late String addMessage; // todo 리스트가 비어있을 때 todo 일정 추가 메시지
   late IconData? importanceIcon01; // 중요도 아이콘 01
   late IconData? importanceIcon02; // 중요도 아이콘 01
   late IconData? importanceIcon03; // 중요도 아이콘 01
   late Color importanceColor; // 중요도 아이콘 색
   late String earliestScheduleContent; // 상단에 가장 빠른 일정 내용
+  
 
 
   @override
@@ -63,8 +64,8 @@ class _PrivateToDoState extends State<PrivateToDo> {
     importanceColor = Colors.white;
     earliestScheduleContent = '';
     
+    TodoList.initializeDummySchedule();
 
-    print(userIndex);
 
     UsersInfo usersInfo = UsersInfo(
       userNo: userIndex,
@@ -72,30 +73,17 @@ class _PrivateToDoState extends State<PrivateToDo> {
       passKey: passKey,
     );
 
-    TodoList todoList = TodoList(
-      userNo: userIndex,
-      listNo: listNo,
-      date: date,
-      startTime: startTime,
-      endTime: endTime,
-      location: location,
-      todoTitle: todoTitle,
-      contentToDo: contentToDo,
-      importance: importance,
-      isPrivate: isPrivate,
-      friendsList: friendsList,
-    );
 
     profileImage = usersInfo.userDb[userIndex][3];
     nickName = usersInfo.userDb[userIndex][4];
-    todoDb = todoList.listDb;
+    todoDb = TodoList.listDb;
 
     // print('${todoDb[0][2]}');
     // print(todoDb);
 
     // 프라이빗 todo 리스트 만들기
     for (int i = 0; i < todoDb.length; i++) {
-      if (todoDb[i][9] == true && todoDb[i][0] == userIndex) {
+      if (todoDb[i].isPrivate == true && todoDb[i].userNo == userIndex) {
         privateToDoList.add(todoDb[i]);
         // print(privateToDoList);
         // print(privateToDoList.length);
@@ -216,10 +204,10 @@ class _PrivateToDoState extends State<PrivateToDo> {
                   if (switchValue == false) {
                   // 최신일정순 정렬 (날짜 오름차순)
                   privateToDoList.sort((a, b) =>
-                  DateTime.parse(a[2]).compareTo(DateTime.parse(b[2])));
+                  DateTime.parse(a.date!).compareTo(DateTime.parse(b.date!)));
                   } else {
                   // 우선순위순 정렬 (중요도 높은 순)
-                  privateToDoList.sort((a, b) => b[8].compareTo(a[8]));
+                  privateToDoList.sort((a, b) => b.importance.compareTo(a.importance));
                   }
                   setState(() {});
                   // 필터 함수 만들어야 함
@@ -238,10 +226,11 @@ class _PrivateToDoState extends State<PrivateToDo> {
               SizedBox(
                 width: 40,
               ),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Get.toNamed('/addtodo',
+              ElevatedButton.icon (
+                onPressed: () async {
+                  await Get.toNamed('/addtodo',
                   arguments: [userIndex]);
+                  refreshPrivateToDoList();
                 }, 
                 icon: Icon(Icons.add),
                 style: ElevatedButton.styleFrom(
@@ -262,7 +251,7 @@ class _PrivateToDoState extends State<PrivateToDo> {
           ),
           if (addMessage.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(30.0),
               child: Text(
                 addMessage,
                 style: TextStyle(
@@ -282,7 +271,10 @@ class _PrivateToDoState extends State<PrivateToDo> {
                   direction: DismissDirection.endToStart,
                   key: ValueKey(privateToDoList[index]),
                   onDismissed: (direction) {
+                    TodoList deleted = privateToDoList[index];
+                    TodoList.listDb.removeWhere((item) => item.listNo == deleted.listNo);
                     privateToDoList.remove(privateToDoList[index]);
+                    refreshPrivateToDoList();
                     setState(() {});
                   },
                   background: Container(
@@ -319,47 +311,67 @@ class _PrivateToDoState extends State<PrivateToDo> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('날짜: ${privateToDoList[index][2]}'),
+                                  Text('날짜: ${privateToDoList[index].date ?? ''}'),
                                   Text(
-                                    '시간: ${privateToDoList[index][3]} - ${privateToDoList[index][4]}',
+                                    '시간: ${privateToDoList[index].startTime ?? ''} - ${privateToDoList[index].endTime ?? ''}',
                                   ),
-                                  Text('장소: ${privateToDoList[index][5]}'),
-                                  Text('제목: ${privateToDoList[index][6]}'),
+                                  Text('장소: ${privateToDoList[index].location}'),
+                                  Text('제목: ${privateToDoList[index].todoTitle}'),
                                   Text(
-                                    '내용: ${getLimitedText(index, privateToDoList[index][7], 20)}',
+                                    '내용: ${getLimitedText(index, privateToDoList[index].contentToDo, 20)}',
                                   ),
                                 ],
                               ),
                             ),
                           ),
                           Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(10.0),
-                                child: Icon(Icons.edit),
+                                child: Icon(Icons.edit_note,
+                                size: 25,
+                                ),
                               ),
-                              SizedBox(height: 50),
-                              Row(
-                                children: [
-                                  Icon(
-                                    importanceIcon01,
-                                    //FontAwesomeIcons.fire,
-                                    color: importanceColor,
-                                    size: 15,
-                                  ),
-                                  Icon(
-                                    importanceIcon02,
-                                    //FontAwesomeIcons.fire,
-                                    color: importanceColor,
-                                    size: 15,
-                                  ),
-                                  Icon(
-                                    importanceIcon03,
-                                    //FontAwesomeIcons.fire,
-                                    color: importanceColor,
-                                    size: 15,
-                                  ),
-                                ],
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.arrow_left,
+                                      color: Colors.white,
+                                    ),
+                                    Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      importanceIcon01,
+                                      //FontAwesomeIcons.fire,
+                                      color: importanceColor,
+                                      size: 15,
+                                    ),
+                                    Icon(
+                                      importanceIcon02,
+                                      //FontAwesomeIcons.fire,
+                                      color: importanceColor,
+                                      size: 15,
+                                    ),
+                                    Icon(
+                                      importanceIcon03,
+                                      //FontAwesomeIcons.fire,
+                                      color: importanceColor,
+                                      size: 15,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -379,9 +391,9 @@ class _PrivateToDoState extends State<PrivateToDo> {
   // Card에서 내용이 너무 길 때 20자가 넘으면 줄임처리하는 함수
   String getLimitedText(int index, String content, int charater) {
     String content = '';
-    (privateToDoList[index][7].toString().length > 20)
-        ? content = privateToDoList[index][7].toString().substring(0, charater)
-        : content = privateToDoList[index][7].toString();
+    (privateToDoList[index].contentToDo.toString().length > 20)
+        ? content = privateToDoList[index].contentToDo.toString().substring(0, charater)
+        : content = privateToDoList[index].contentToDo.toString();
 
     return '$content...';
   }
@@ -393,7 +405,7 @@ class _PrivateToDoState extends State<PrivateToDo> {
   importanceIcon02 = null;
   importanceIcon03 = null;
 
-  int importance = privateToDoList[index][8];
+  int importance = privateToDoList[index].importance;
 
   if (importance == 1) {
     importanceIcon01 = FontAwesomeIcons.fire;
@@ -412,20 +424,43 @@ class _PrivateToDoState extends State<PrivateToDo> {
 
   // 상단에 보여주는 가장 빠른 일정을 알리는 메시지
   earliestScheduleMessage(){
+    if (privateToDoList.isEmpty) {
+      earliestScheduleContent = '일정 추가 필요함.';
+      return;
+    }
     DateTime date;
     DateTime? earliestDate;
     int? earliestIndex;
 
     for (int i =0 ; i < privateToDoList.length; i++){
-      date = DateTime.parse(privateToDoList[i][2]);
+      date = DateTime.parse(privateToDoList[i].date.toString());
       
       if (earliestDate == null || date.isBefore(earliestDate)){
         earliestDate = date;
         earliestIndex = i;
       }
       if (earliestIndex != null){
-        earliestScheduleContent = ' 날짜 : ${privateToDoList[earliestIndex][2]}\n 시간 : ${privateToDoList[earliestIndex][3]}\n 확인하세요!';
-      }
+        earliestScheduleContent = ' 날짜 : ${privateToDoList[earliestIndex].date}\n 시간 : ${privateToDoList[earliestIndex].startTime}\n 확인하세요!';
+      } 
     }
+  }
+
+
+  refreshPrivateToDoList(){
+    todoDb = TodoList.listDb;
+    privateToDoList = todoDb
+    .where((todoDb) => todoDb.isPrivate && todoDb.userNo == userIndex).toList();
+
+    privateToDoList.sort((a, b) =>
+                  DateTime.parse(a.date!).compareTo(DateTime.parse(b.date!)));
+
+    if (privateToDoList.isEmpty){
+      addMessage = '일정을 추가하세요!';
+    } else {
+      addMessage = '';
+    }
+    
+    earliestScheduleMessage();
+    setState(() {});
   }
 } // Class
