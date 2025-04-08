@@ -39,8 +39,9 @@ class _PublicToDoState extends State<PublicToDo> {
   late IconData? importanceIcon03; // 중요도 아이콘 01
   late Color importanceColor; // 중요도 아이콘 색
   late String earliestScheduleContent; // 상단에 가장 빠른 일정 내용
-  late String profileImageCard;
-  late String nickNameCard;
+  late String profileImageCard; // Card에 노출되는 사용자 이미지
+  late String nickNameCard; // Card에 노출되는 사용자 닉네임
+  bool showMyScheduleOnly = false; // 로그인한 사용자의 일정만 볼 수 있는 지표
 
   @override
   void initState() {
@@ -64,6 +65,8 @@ class _PublicToDoState extends State<PublicToDo> {
     importanceIcon03 = null;
     importanceColor = Colors.white;
     earliestScheduleContent = '';
+    profileImageCard = '';
+    nickNameCard = '';
 
     TodoList.initializeDummySchedule();
 
@@ -72,15 +75,15 @@ class _PublicToDoState extends State<PublicToDo> {
       emailTypeId: emailTypeId,
       passKey: passKey,
     );
+    
+    
+
 
     profileImage = usersInfo.userDb[userIndex][3];
     nickName = usersInfo.userDb[userIndex][4];
     todoDb = TodoList.listDb;
 
-    // print('${todoDb[0][2]}');
-    // print(todoDb);
-
-    // 프라이빗 todo 리스트 만들기
+    // 퍼블릭 todo 리스트 만들기
     for (int i = 0; i < todoDb.length; i++) {
       if (todoDb[i].isPrivate == false) {
         publicToDoList.add(todoDb[i]);
@@ -88,6 +91,7 @@ class _PublicToDoState extends State<PublicToDo> {
         // print(publicToDoList.length);
       }
     }
+
     if (publicToDoList.isEmpty) {
       addMessage = '퍼블릭 일정이 없습니다.!';
     }
@@ -120,7 +124,7 @@ class _PublicToDoState extends State<PublicToDo> {
                           Image.asset('images/schedule_logo.png', width: 70),
                           Padding(
                             padding: const EdgeInsets.all(5.0),
-                            child: Text('빠른 일정'),
+                            child: Text('메시지^^'),
                           ),
                         ],
                       ),
@@ -224,9 +228,10 @@ class _PublicToDoState extends State<PublicToDo> {
               ),
               SizedBox(width: 40),
               ElevatedButton.icon(
-                onPressed: () async {
-                  await Get.toNamed('/addtodo', arguments: [userIndex]);
-                  refreshpublicToDoList();
+                onPressed: () {
+                  showMyScheduleOnly = !showMyScheduleOnly;
+                  filterPublicList();
+                  setState(() {});
                 },
                 icon: Icon(Icons.person),
                 style: ElevatedButton.styleFrom(
@@ -235,9 +240,10 @@ class _PublicToDoState extends State<PublicToDo> {
                   ),
                   backgroundColor: Color(0xFFE9D5FF),
                   shadowColor: Colors.black54,
+                  minimumSize: Size(130, 40),
                 ),
                 label: Text(
-                  '내 일정',
+                  showMyScheduleOnly ? '전체 일정' : '내 일정',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
@@ -261,132 +267,113 @@ class _PublicToDoState extends State<PublicToDo> {
               itemCount: publicToDoList.length,
               itemBuilder: (context, index) {
                 importanceCheck(index);
-                return Dismissible(
-                  direction: DismissDirection.endToStart,
-                  key: ValueKey(publicToDoList[index]),
-                  onDismissed: (direction) {
-                    TodoList deleted = publicToDoList[index];
-                    TodoList.listDb.removeWhere(
-                      (item) => item.listNo == deleted.listNo,
-                    );
-                    publicToDoList.remove(publicToDoList[index]);
-                    refreshpublicToDoList();
-                    setState(() {});
-                  },
-                  background: Container(
-                    color: Colors.red[300],
-                    alignment: Alignment.centerRight,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-
-                    child: Icon(Icons.delete_forever, size: 70),
-                  ),
-                  child: SizedBox(
-                    height: 135,
-                    child: Card(
-                      color:
-                          (index % 2 == 0)
-                              ? Color(0xFFA3E635)
-                              : Color(0xFFE9D5FF),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Icon(
-                              Icons.public,
-                              color: Color(0xFF38BDF8),
-                              size: 40,
+                cardUserInfo(publicToDoList[index].userNo);
+                return SizedBox(
+                  height: 135,
+                  child: Card(
+                    color:
+                        (index % 2 == 0)
+                            ? Color(0xFFA3E635)
+                            : Color(0xFFE9D5FF),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Icon(
+                            Icons.public,
+                            color: Color(0xFF38BDF8),
+                            size: 40,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            width: 250,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '날짜: ${publicToDoList[index].date ?? ''}',
+                                ),
+                                Text(
+                                  '시간: ${publicToDoList[index].startTime ?? ''} - ${publicToDoList[index].endTime ?? ''}',
+                                ),
+                                Text('장소: ${publicToDoList[index].location}'),
+                                Text(
+                                  '제목: ${publicToDoList[index].todoTitle}',
+                                ),
+                                Text(
+                                  '내용: ${getLimitedText(publicToDoList[index].contentToDo, 20)}',
+                                ),
+                              ],
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: 250,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                          
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 15, 10, 5),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Color(0xFF334155),
+                                    width: 1.0,
+                                  ),
+                                ),
+                                child: CircleAvatar(
+                                  radius: 25,
+                                  backgroundColor: Color(0xFFF9FAFB),
+                                  child: ClipOval(
+                                    child: Image.asset(
+                                      profileImageCard,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                              child: Text(
+                                nickNameCard,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Row(
                                 children: [
-                                  Text(
-                                    '날짜: ${publicToDoList[index].date ?? ''}',
+                                  Icon(
+                                    importanceIcon01,
+                                    //FontAwesomeIcons.fire,
+                                    color: importanceColor,
+                                    size: 15,
                                   ),
-                                  Text(
-                                    '시간: ${publicToDoList[index].startTime ?? ''} - ${publicToDoList[index].endTime ?? ''}',
+                                  Icon(
+                                    importanceIcon02,
+                                    //FontAwesomeIcons.fire,
+                                    color: importanceColor,
+                                    size: 15,
                                   ),
-                                  Text('장소: ${publicToDoList[index].location}'),
-                                  Text(
-                                    '제목: ${publicToDoList[index].todoTitle}',
-                                  ),
-                                  Text(
-                                    '내용: ${getLimitedText(publicToDoList[index].contentToDo, 20)}',
+                                  Icon(
+                                    importanceIcon03,
+                                    //FontAwesomeIcons.fire,
+                                    color: importanceColor,
+                                    size: 15,
                                   ),
                                 ],
                               ),
                             ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                            
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(10, 15, 10, 5),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: Color(0xFF334155),
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                  child: CircleAvatar(
-                                    radius: 25,
-                                    backgroundColor: Color(0xFFF9FAFB),
-                                    child: ClipOval(
-                                      child: Image.asset(
-                                        profileImage,
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                child: Text(
-                                  nickName,
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold
-                                  ),
-                                  ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      importanceIcon01,
-                                      //FontAwesomeIcons.fire,
-                                      color: importanceColor,
-                                      size: 15,
-                                    ),
-                                    Icon(
-                                      importanceIcon02,
-                                      //FontAwesomeIcons.fire,
-                                      color: importanceColor,
-                                      size: 15,
-                                    ),
-                                    Icon(
-                                      importanceIcon03,
-                                      //FontAwesomeIcons.fire,
-                                      color: importanceColor,
-                                      size: 15,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -404,7 +391,7 @@ class _PublicToDoState extends State<PublicToDo> {
     if (content.length > charater) {
       return '${content.substring(0, charater)}...';
     }
-    return '$content ...';
+    return '$content..';
   }
 
   // 아이콘 중요도 삽입 및 색 변경
@@ -436,43 +423,45 @@ class _PublicToDoState extends State<PublicToDo> {
     if (publicToDoList.isEmpty) {
       earliestScheduleContent = '퍼블릭 일정이 없음.';
       return;
+    } else if (publicToDoList.isNotEmpty){
+      earliestScheduleContent = '일정 수: ${publicToDoList.length}\n일정을 살펴보세요.';
     }
-    DateTime date;
-    DateTime? earliestDate;
-    int? earliestIndex;
 
-    for (int i = 0; i < publicToDoList.length; i++) {
-      date = DateTime.parse(publicToDoList[i].date.toString());
+   
+  }
+  
+  // 카드 일정 고유의 사용자 이미지와 닉네임을 노출하는 함수
+  cardUserInfo(int userNo) {
+    UsersInfo usersInfo = UsersInfo(
+      userNo: userNo, 
+      emailTypeId: '', 
+      passKey: '');
 
-      if (earliestDate == null || date.isBefore(earliestDate)) {
-        earliestDate = date;
-        earliestIndex = i;
-      }
-      if (earliestIndex != null) {
-        earliestScheduleContent =
-            ' 날짜 : ${publicToDoList[earliestIndex].date}\n 시간 : ${publicToDoList[earliestIndex].startTime}\n 확인하세요!';
-      }
-    }
+    profileImageCard = usersInfo.userDb[userNo][3];
+    nickNameCard = usersInfo.userDb[userNo][4];
   }
 
-  refreshpublicToDoList() {
+  // 퍼블릭 목록에서 내 일정만 보여주는 토글 기능이 있는 함수
+  filterPublicList(){
     todoDb = TodoList.listDb;
-    publicToDoList =
-        todoDb
-            .where((todoDb) => todoDb.isPrivate && todoDb.userNo == userIndex)
-            .toList();
 
-    publicToDoList.sort(
-      (a, b) => DateTime.parse(a.date!).compareTo(DateTime.parse(b.date!)),
-    );
-
-    if (publicToDoList.isEmpty) {
-      addMessage = '퍼블릭 일정이 없습니다!';
+    if (showMyScheduleOnly) {
+      publicToDoList = todoDb
+        .where((todo) => !todo.isPrivate && todo.userNo == userIndex).toList();
     } else {
-      addMessage = '';
+      publicToDoList = todoDb.where((todo) => !todo.isPrivate).toList();
     }
 
-    earliestScheduleMessage();
-    setState(() {});
+  if (switchValue == false) {
+    publicToDoList.sort((a, b) =>
+        DateTime.parse(a.date!).compareTo(DateTime.parse(b.date!)));
+  } else {
+    publicToDoList.sort((a, b) => b.importance.compareTo(a.importance));
   }
+
+  addMessage = publicToDoList.isEmpty ? '일정이 없습니다.' : '';
+  earliestScheduleMessage();
+
+  }
+
 } // Class

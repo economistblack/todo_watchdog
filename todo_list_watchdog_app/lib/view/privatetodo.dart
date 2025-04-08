@@ -117,7 +117,7 @@ class _PrivateToDoState extends State<PrivateToDo> {
                           Image.asset('images/schedule_logo.png', width: 70),
                           Padding(
                             padding: const EdgeInsets.all(5.0),
-                            child: Text('빠른 일정'),
+                            child: Text('최신일정'),
                           ),
                         ],
                       ),
@@ -232,6 +232,7 @@ class _PrivateToDoState extends State<PrivateToDo> {
                   ),
                   backgroundColor: Color(0xFFE9D5FF),
                   shadowColor: Colors.black54,
+                  minimumSize: Size(130, 40)
                 ),
                 label: Text(
                   '일정 추가',

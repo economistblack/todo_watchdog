@@ -24,7 +24,7 @@ class UsersInfo {
       [3, 'roosevelt@gmail.com', '1234567', 'images/user03.png', 'Theodore'],
       [4, 'truman@gmail.com', '1234567', 'images/user04.png', 'Harry S'],
       [5, 'eisenhower@gmail.com', '1234567', 'images/user05.png', 'Dwight'],
-      [6, 'kennedy@gmail.com', '1234567', 'images/user06.png', 'John'],
+      [6, 'kennedy@gmail.com', '1234567', 'images/user06.png', 'John F'],
       [7, 'nixon@gmail.com', '1234567', 'images/user07.png', 'Richard'],
       [8, 'reagan@gmail.com', '1234567', 'images/user08.png', 'Ronald'],
       [9, 'bush@gmail.com', '1234567', 'images/user09.png', 'George W'],
