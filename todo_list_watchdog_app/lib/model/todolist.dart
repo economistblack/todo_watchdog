@@ -32,7 +32,7 @@ class TodoList {
     if (isInitialized) return;
     listDb = [
       TodoList(
-        userNo: 9, 
+        userNo: 8, 
         listNo: 1, 
         date: '2025-04-16', 
         startTime: '19:30', 
@@ -68,7 +68,7 @@ class TodoList {
         isPrivate: true, 
         friendsList: []),
       TodoList(
-        userNo: 9, 
+        userNo: 7, 
         listNo: 4, 
         date: '2025-04-19', 
         startTime: '10:00', 

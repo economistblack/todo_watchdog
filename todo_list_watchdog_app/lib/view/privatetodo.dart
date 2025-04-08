@@ -38,8 +38,6 @@ class _PrivateToDoState extends State<PrivateToDo> {
   late IconData? importanceIcon03; // 중요도 아이콘 01
   late Color importanceColor; // 중요도 아이콘 색
   late String earliestScheduleContent; // 상단에 가장 빠른 일정 내용
-  
-
 
   @override
   void initState() {
@@ -63,16 +61,14 @@ class _PrivateToDoState extends State<PrivateToDo> {
     importanceIcon03 = null;
     importanceColor = Colors.white;
     earliestScheduleContent = '';
-    
-    TodoList.initializeDummySchedule();
 
+    TodoList.initializeDummySchedule();
 
     UsersInfo usersInfo = UsersInfo(
       userNo: userIndex,
       emailTypeId: emailTypeId,
       passKey: passKey,
     );
-
 
     profileImage = usersInfo.userDb[userIndex][3];
     nickName = usersInfo.userDb[userIndex][4];
@@ -118,29 +114,24 @@ class _PrivateToDoState extends State<PrivateToDo> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Image.asset(
-                            'images/schedule_logo.png',
-                            width: 70,
-                          ),
+                          Image.asset('images/schedule_logo.png', width: 70),
                           Padding(
                             padding: const EdgeInsets.all(5.0),
                             child: Text('빠른 일정'),
                           ),
                         ],
                       ),
-                      SizedBox(
-                        width: 7,
-                      ),
+                      SizedBox(width: 7),
                       Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Column(
                           children: [
                             Text(
-                              earliestScheduleContent, 
+                              earliestScheduleContent,
                               style: TextStyle(
                                 color: Color(0xFF334155),
                                 fontStyle: FontStyle.italic,
-                                fontWeight: FontWeight.bold
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
@@ -202,12 +193,17 @@ class _PrivateToDoState extends State<PrivateToDo> {
                 onToggle: (value) {
                   switchValue = value;
                   if (switchValue == false) {
-                  // 최신일정순 정렬 (날짜 오름차순)
-                  privateToDoList.sort((a, b) =>
-                  DateTime.parse(a.date!).compareTo(DateTime.parse(b.date!)));
+                    // 최신일정순 정렬 (날짜 오름차순)
+                    privateToDoList.sort(
+                      (a, b) => DateTime.parse(
+                        a.date!,
+                      ).compareTo(DateTime.parse(b.date!)),
+                    );
                   } else {
-                  // 우선순위순 정렬 (중요도 높은 순)
-                  privateToDoList.sort((a, b) => b.importance.compareTo(a.importance));
+                    // 우선순위순 정렬 (중요도 높은 순)
+                    privateToDoList.sort(
+                      (a, b) => b.importance.compareTo(a.importance),
+                    );
                   }
                   setState(() {});
                   // 필터 함수 만들어야 함
@@ -223,28 +219,23 @@ class _PrivateToDoState extends State<PrivateToDo> {
                   ),
                 ),
               ),
-              SizedBox(
-                width: 40,
-              ),
-              ElevatedButton.icon (
+              SizedBox(width: 40),
+              ElevatedButton.icon(
                 onPressed: () async {
-                  await Get.toNamed('/addtodo',
-                  arguments: [userIndex]);
+                  await Get.toNamed('/addtodo', arguments: [userIndex]);
                   refreshPrivateToDoList();
-                }, 
+                },
                 icon: Icon(Icons.add),
                 style: ElevatedButton.styleFrom(
                   shape: ContinuousRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                backgroundColor: Color(0xFFE9D5FF),
-                shadowColor: Colors.black54,
+                  backgroundColor: Color(0xFFE9D5FF),
+                  shadowColor: Colors.black54,
                 ),
                 label: Text(
                   '일정 추가',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -272,7 +263,9 @@ class _PrivateToDoState extends State<PrivateToDo> {
                   key: ValueKey(privateToDoList[index]),
                   onDismissed: (direction) {
                     TodoList deleted = privateToDoList[index];
-                    TodoList.listDb.removeWhere((item) => item.listNo == deleted.listNo);
+                    TodoList.listDb.removeWhere(
+                      (item) => item.listNo == deleted.listNo,
+                    );
                     privateToDoList.remove(privateToDoList[index]);
                     refreshPrivateToDoList();
                     setState(() {});
@@ -281,11 +274,8 @@ class _PrivateToDoState extends State<PrivateToDo> {
                     color: Colors.red[300],
                     alignment: Alignment.centerRight,
                     padding: EdgeInsets.symmetric(horizontal: 20),
-                  
-                    child: Icon(
-                      Icons.delete_forever,
-                      size: 70,
-                    ),
+
+                    child: Icon(Icons.delete_forever, size: 70),
                   ),
                   child: SizedBox(
                     height: 135,
@@ -300,7 +290,7 @@ class _PrivateToDoState extends State<PrivateToDo> {
                             padding: const EdgeInsets.all(10.0),
                             child: Icon(
                               Icons.lock,
-                              color: Color(0xFF334155),
+                              color: Color(0xFF38BDF8),
                               size: 40,
                             ),
                           ),
@@ -311,14 +301,20 @@ class _PrivateToDoState extends State<PrivateToDo> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('날짜: ${privateToDoList[index].date ?? ''}'),
+                                  Text(
+                                    '날짜: ${privateToDoList[index].date ?? ''}',
+                                  ),
                                   Text(
                                     '시간: ${privateToDoList[index].startTime ?? ''} - ${privateToDoList[index].endTime ?? ''}',
                                   ),
-                                  Text('장소: ${privateToDoList[index].location}'),
-                                  Text('제목: ${privateToDoList[index].todoTitle}'),
                                   Text(
-                                    '내용: ${getLimitedText(index, privateToDoList[index].contentToDo, 20)}',
+                                    '장소: ${privateToDoList[index].location}',
+                                  ),
+                                  Text(
+                                    '제목: ${privateToDoList[index].todoTitle}',
+                                  ),
+                                  Text(
+                                    '내용: ${getLimitedText(privateToDoList[index].contentToDo, 20)}',
                                   ),
                                 ],
                               ),
@@ -329,22 +325,35 @@ class _PrivateToDoState extends State<PrivateToDo> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(10.0),
-                                child: Icon(Icons.edit_note,
-                                size: 25,
+                                child: Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () async {
+                                        await Get.toNamed(
+                                          '/edittodo',
+                                          arguments: [userIndex, privateToDoList[index]],
+                                        );
+                                        refreshPrivateToDoList();
+                                      },
+                                      child: Icon(Icons.edit_note, size: 25),
+                                    ),
+                                    Text(
+                                      '(클릭)',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Color(0xFF334155),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
+
                               Padding(
                                 padding: const EdgeInsets.all(10.0),
                                 child: Row(
                                   children: [
-                                    Icon(
-                                      Icons.arrow_left,
-                                      color: Colors.white,
-                                    ),
-                                    Icon(
-                                      Icons.delete,
-                                      color: Colors.white,
-                                    ),
+                                    Icon(Icons.arrow_left, color: Colors.white),
+                                    Icon(Icons.delete, color: Colors.white),
                                   ],
                                 ),
                               ),
@@ -389,41 +398,40 @@ class _PrivateToDoState extends State<PrivateToDo> {
   } // build
 
   // Card에서 내용이 너무 길 때 20자가 넘으면 줄임처리하는 함수
-  String getLimitedText(int index, String content, int charater) {
-    String content = '';
-    (privateToDoList[index].contentToDo.toString().length > 20)
-        ? content = privateToDoList[index].contentToDo.toString().substring(0, charater)
-        : content = privateToDoList[index].contentToDo.toString();
-
-    return '$content...';
+  String getLimitedText(String? content, int charater) {
+   if (content == null || content.isEmpty) return '';
+   if (content.length > charater) {
+    return '${content.substring(0, charater)}...';
+  }
+  return '$content ...';
   }
 
   // 아이콘 중요도 삽입 및 색 변경
   importanceCheck(int index) {
-  // 모든 아이콘을 먼저 null로 초기화
-  importanceIcon01 = null;
-  importanceIcon02 = null;
-  importanceIcon03 = null;
+    // 모든 아이콘을 먼저 null로 초기화
+    importanceIcon01 = null;
+    importanceIcon02 = null;
+    importanceIcon03 = null;
 
-  int importance = privateToDoList[index].importance;
+    int importance = privateToDoList[index].importance;
 
-  if (importance == 1) {
-    importanceIcon01 = FontAwesomeIcons.fire;
-    importanceColor = Colors.white;
-  } else if (importance == 2) {
-    importanceIcon01 = FontAwesomeIcons.fire;
-    importanceIcon02 = FontAwesomeIcons.fire;
-    importanceColor = Colors.orange;
-  } else if (importance == 3) {
-    importanceIcon01 = FontAwesomeIcons.fire;
-    importanceIcon02 = FontAwesomeIcons.fire;
-    importanceIcon03 = FontAwesomeIcons.fire;
-    importanceColor = Colors.red;
+    if (importance == 1) {
+      importanceIcon01 = FontAwesomeIcons.fire;
+      importanceColor = Colors.white;
+    } else if (importance == 2) {
+      importanceIcon01 = FontAwesomeIcons.fire;
+      importanceIcon02 = FontAwesomeIcons.fire;
+      importanceColor = Colors.orange;
+    } else if (importance == 3) {
+      importanceIcon01 = FontAwesomeIcons.fire;
+      importanceIcon02 = FontAwesomeIcons.fire;
+      importanceIcon03 = FontAwesomeIcons.fire;
+      importanceColor = Colors.red;
+    }
   }
-}
 
   // 상단에 보여주는 가장 빠른 일정을 알리는 메시지
-  earliestScheduleMessage(){
+  earliestScheduleMessage() {
     if (privateToDoList.isEmpty) {
       earliestScheduleContent = '일정 추가 필요함.';
       return;
@@ -432,34 +440,37 @@ class _PrivateToDoState extends State<PrivateToDo> {
     DateTime? earliestDate;
     int? earliestIndex;
 
-    for (int i =0 ; i < privateToDoList.length; i++){
+    for (int i = 0; i < privateToDoList.length; i++) {
       date = DateTime.parse(privateToDoList[i].date.toString());
-      
-      if (earliestDate == null || date.isBefore(earliestDate)){
+
+      if (earliestDate == null || date.isBefore(earliestDate)) {
         earliestDate = date;
         earliestIndex = i;
       }
-      if (earliestIndex != null){
-        earliestScheduleContent = ' 날짜 : ${privateToDoList[earliestIndex].date}\n 시간 : ${privateToDoList[earliestIndex].startTime}\n 확인하세요!';
-      } 
+      if (earliestIndex != null) {
+        earliestScheduleContent =
+            ' 날짜 : ${privateToDoList[earliestIndex].date}\n 시간 : ${privateToDoList[earliestIndex].startTime}\n 확인하세요!';
+      }
     }
   }
 
-
-  refreshPrivateToDoList(){
+  refreshPrivateToDoList() {
     todoDb = TodoList.listDb;
-    privateToDoList = todoDb
-    .where((todoDb) => todoDb.isPrivate && todoDb.userNo == userIndex).toList();
+    privateToDoList =
+        todoDb
+            .where((todoDb) => todoDb.isPrivate && todoDb.userNo == userIndex && todoDb.isPrivate == true)
+            .toList();
 
-    privateToDoList.sort((a, b) =>
-                  DateTime.parse(a.date!).compareTo(DateTime.parse(b.date!)));
+    privateToDoList.sort(
+      (a, b) => DateTime.parse(a.date!).compareTo(DateTime.parse(b.date!)),
+    );
 
-    if (privateToDoList.isEmpty){
+    if (privateToDoList.isEmpty) {
       addMessage = '일정을 추가하세요!';
     } else {
       addMessage = '';
     }
-    
+
     earliestScheduleMessage();
     setState(() {});
   }
