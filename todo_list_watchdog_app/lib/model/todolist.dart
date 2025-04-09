@@ -187,6 +187,18 @@ class TodoList {
         importance: 1, 
         isPrivate: false, 
         friendsList: []),
+        TodoList(
+        userNo: 1, 
+        listNo: 14, 
+        date: '2025-05-30', 
+        startTime: '10:00', 
+        endTime: '12:30', 
+        location: '비공개', 
+        todoTitle: '블록체인 코딩', 
+        contentToDo: '스텔라 네트워크로 국가간 송금하기', 
+        importance: 2, 
+        isPrivate: false, 
+        friendsList: []),
     ];
     isInitialized = true;
   }
