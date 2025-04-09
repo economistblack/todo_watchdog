@@ -261,6 +261,12 @@ class _MyPageState extends State<MyPage> {
                   ],
                 ),
               ),
+              TextField(
+                controller: nickNameController,
+                decoration: InputDecoration(
+                  labelText: '',
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

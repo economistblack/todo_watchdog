@@ -274,6 +274,12 @@ class _PublicToDoState extends State<PublicToDo> {
                 return Dismissible(
                   direction: DismissDirection.endToStart,
                   key: ValueKey(publicToDoList[index]),
+                  background: Container(
+                    color: Colors.red[300],
+                    alignment: Alignment.centerRight,
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Icon(Icons.delete_forever, size: 70),
+                  ),
                   confirmDismiss: (direction) async {
                     // 본인 일정이 아니면 삭제 금지
                     if (publicToDoList[index].userNo != userIndex) {
@@ -319,114 +325,185 @@ class _PublicToDoState extends State<PublicToDo> {
                   },
                   child: SizedBox(
                     height: 135,
-                    child: Card(
-                      color:
-                          (index % 2 == 0)
-                              ? Color(0xFFA3E635)
-                              : Color(0xFFE9D5FF),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Icon(
-                              Icons.public,
-                              color: Color(0xFF38BDF8),
-                              size: 40,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: 250,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '날짜: ${publicToDoList[index].date ?? ''}',
-                                  ),
-                                  Text(
-                                    '시간: ${publicToDoList[index].startTime ?? ''} - ${publicToDoList[index].endTime ?? ''}',
-                                  ),
-                                  Text('장소: ${publicToDoList[index].location}'),
-                                  Text(
-                                    '제목: ${publicToDoList[index].todoTitle}',
-                                  ),
-                                  Text(
-                                    '내용: ${getLimitedText(publicToDoList[index].contentToDo, 20)}',
-                                  ),
-                                ],
+                    child: GestureDetector(
+                      onDoubleTap: () {
+                        final int friendNo =
+                            publicToDoList[index].userNo; // 친구로 추가할 대상
+                        final UsersInfo me =
+                            UsersInfo.userDb[userIndex]; // 현재 로그인한 유저
+
+                        if (me.userNo == friendNo) {
+                          // 자기 자신은 친구 추가 불가
+                          Get.snackbar(
+                            '',
+                            '자기 자신은 친구로 추가할 수 없습니다!',
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Color(0xFFE9D5FF),
+                            colorText: Color(0xFF334155),
+                            titleText: const Text(
+                              '⚠️ 알림',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
                               ),
                             ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                  10,
-                                  15,
-                                  10,
-                                  5,
-                                ),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: Color(0xFF334155),
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                  child: CircleAvatar(
-                                    radius: 25,
-                                    backgroundColor: Color(0xFFF9FAFB),
-                                    child: ClipOval(
-                                      child: Image.asset(
-                                        profileImageCard,
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                          );
+                          return;
+                        }
+
+                        if (me.friendsGroup.contains(friendNo)) {
+                          // 이미 친구
+                          Get.snackbar(
+                            '',
+                            '${UsersInfo.userDb[friendNo].userNickName}님은 이미 친구입니다!',
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Color(0xFFE9D5FF),
+                            colorText: Color(0xFF334155),
+                            titleText: const Text(
+                              '📌 친구 상태',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                child: Text(
-                                  nickNameCard,
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                            ),
+                          );
+                        } else {
+                          // 친구로 추가
+                          me.friendsGroup.add(friendNo);
+
+                          Get.snackbar(
+                            '',
+                            '${UsersInfo.userDb[friendNo].userNickName}님이 친구로 추가되었습니다!',
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Color(0xFFE9D5FF),
+                            colorText: Color(0xFF334155),
+                            titleText: const Text(
+                              '🤝 친구 추가',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
+                            ),
+                          );
+                          setState(() {}); // 필요 시 친구 수 반영 등 UI 업데이트
+                        }
+                      },
+                      child: Card(
+                        color:
+                            (index % 2 == 0)
+                                ? Color(0xFFA3E635)
+                                : Color(0xFFE9D5FF),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Icon(
+                                Icons.public,
+                                color: Color(0xFF38BDF8),
+                                size: 40,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: 250,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Icon(
-                                      importanceIcon01,
-                                      //FontAwesomeIcons.fire,
-                                      color: importanceColor,
-                                      size: 15,
+                                    Text(
+                                      '날짜: ${publicToDoList[index].date ?? ''}',
                                     ),
-                                    Icon(
-                                      importanceIcon02,
-                                      //FontAwesomeIcons.fire,
-                                      color: importanceColor,
-                                      size: 15,
+                                    Text(
+                                      '시간: ${publicToDoList[index].startTime ?? ''} - ${publicToDoList[index].endTime ?? ''}',
                                     ),
-                                    Icon(
-                                      importanceIcon03,
-                                      //FontAwesomeIcons.fire,
-                                      color: importanceColor,
-                                      size: 15,
+                                    Text(
+                                      '장소: ${publicToDoList[index].location}',
+                                    ),
+                                    Text(
+                                      '제목: ${publicToDoList[index].todoTitle}',
+                                    ),
+                                    Text(
+                                      '내용: ${getLimitedText(publicToDoList[index].contentToDo, 20)}',
                                     ),
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    10,
+                                    15,
+                                    10,
+                                    5,
+                                  ),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Color(0xFF334155),
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                    child: CircleAvatar(
+                                      radius: 25,
+                                      backgroundColor: Color(0xFFF9FAFB),
+                                      child: ClipOval(
+                                        child: Image.asset(
+                                          profileImageCard,
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    10,
+                                    0,
+                                    0,
+                                    0,
+                                  ),
+                                  child: Text(
+                                    nickNameCard,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        importanceIcon01,
+                                        //FontAwesomeIcons.fire,
+                                        color: importanceColor,
+                                        size: 15,
+                                      ),
+                                      Icon(
+                                        importanceIcon02,
+                                        //FontAwesomeIcons.fire,
+                                        color: importanceColor,
+                                        size: 15,
+                                      ),
+                                      Icon(
+                                        importanceIcon03,
+                                        //FontAwesomeIcons.fire,
+                                        color: importanceColor,
+                                        size: 15,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -478,7 +555,8 @@ class _PublicToDoState extends State<PublicToDo> {
       earliestScheduleContent = '퍼블릭 일정이 없음.';
       return;
     } else if (publicToDoList.isNotEmpty) {
-      earliestScheduleContent = '일정 수: ${publicToDoList.length}\n일정을 살펴보세요.';
+      earliestScheduleContent =
+          '일정 수 : ${publicToDoList.length}\n<- : 내 일정 삭제 \n더븙클릭 : 친구 추가';
     }
   }
 
