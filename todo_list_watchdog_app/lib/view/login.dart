@@ -20,10 +20,8 @@ class _LoginState extends State<Login> {
   late Timer timer; // 로그인 페이지 하단 이미지 타이머
   late RegExp emailRegex; // 이메일 정규식
   late String loginInfo; // 로그인 실패시 표시되는 정보
-  late List<List<dynamic>> loginDb; // 사용자 정보가 들어간 DB 리스트
+  late List<UsersInfo> loginDb; // 사용자 정보가 들어간 DB 리스트
   late bool emailTypeValid; // ID가 이메일 정규식과 일치하는지 여부의 구분 값
-  
-  
 
   @override
   void initState() {
@@ -36,14 +34,7 @@ class _LoginState extends State<Login> {
     bannerImage = 'images/frontbanner01.png';
     emailRegex = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
 
-    UsersInfo usersInfo = UsersInfo(
-      userNo: userNo,
-      emailTypeId: emailTypeId,
-      passKey: passKey,
-    );
-
-    loginDb = usersInfo.userDb;
-
+    loginDb = UsersInfo.userDb;
 
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       chagneBanner();
@@ -193,13 +184,13 @@ class _LoginState extends State<Login> {
     bool loginSuccess = false;
 
     for (int i = 0; i < loginDb.length; i++) {
-      if (loginDb[i][1] == emailTypeIdController.text &&
-          loginDb[i][2] == passKeyController.text) {
+      if (loginDb[i].emailTypeId == emailTypeIdController.text &&
+          loginDb[i].passKey == passKeyController.text) {
         timer.cancel();
-        super.dispose();
-        Get.toNamed('/home',
-        arguments: [loginDb[i][0]],
-        );
+
+        // 로그인 성공 시 홈으로 이동, userNo 전달
+        Get.toNamed('/home', arguments: [loginDb[i].userNo]);
+
         loginSuccess = true;
         break;
       }

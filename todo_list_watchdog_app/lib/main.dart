@@ -5,6 +5,7 @@ import 'package:todo_list_watchdog_app/home.dart';
 import 'package:todo_list_watchdog_app/view/addtodo.dart';
 import 'package:todo_list_watchdog_app/view/edittodo.dart';
 import 'package:todo_list_watchdog_app/view/login.dart';
+import 'package:todo_list_watchdog_app/view/mypage.dart';
 
 void main() {
   runApp(
@@ -46,6 +47,18 @@ class MyApp extends StatelessWidget {
           name: '/edittodo', 
           page: () => EditToDo(),
           transition: Transition.fade,
+          transitionDuration: Duration(seconds: 1),
+          ),
+        GetPage(
+          name: '/mypage', 
+          page: () => MyPage(),
+          transition: Transition.fade,
+          transitionDuration: Duration(seconds: 1),
+          ),
+        GetPage(
+          name: '/login', 
+          page: () => Login(),
+          transition: Transition.circularReveal,
           transitionDuration: Duration(seconds: 1),
           ),
       ],

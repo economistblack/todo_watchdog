@@ -64,14 +64,10 @@ class _PrivateToDoState extends State<PrivateToDo> {
 
     TodoList.initializeDummySchedule();
 
-    UsersInfo usersInfo = UsersInfo(
-      userNo: userIndex,
-      emailTypeId: emailTypeId,
-      passKey: passKey,
-    );
+ 
 
-    profileImage = usersInfo.userDb[userIndex][3];
-    nickName = usersInfo.userDb[userIndex][4];
+    profileImage = UsersInfo.userDb[userIndex].userImage;
+    nickName = UsersInfo.userDb[userIndex].userNickName;
     todoDb = TodoList.listDb;
 
     // print('${todoDb[0][2]}');
@@ -150,11 +146,17 @@ class _PrivateToDoState extends State<PrivateToDo> {
                           width: 2.0,
                         ),
                       ),
-                      child: CircleAvatar(
-                        radius: 45,
-                        backgroundColor: Color(0xFF38BDF8),
-                        child: ClipOval(
-                          child: Image.asset(profileImage, fit: BoxFit.contain),
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.toNamed('/mypage', arguments: [userIndex]);
+                          
+                        },
+                        child: CircleAvatar(
+                          radius: 45,
+                          backgroundColor: Color(0xFF38BDF8),
+                          child: ClipOval(
+                            child: Image.asset(profileImage, fit: BoxFit.contain),
+                          ),
                         ),
                       ),
                     ),

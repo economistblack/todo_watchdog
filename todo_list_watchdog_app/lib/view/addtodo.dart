@@ -53,14 +53,10 @@ class _AddToDoState extends State<AddToDo> {
     radioIsPrivate = 0;
     infoSnackBarText = '';
 
-    UsersInfo usersInfo = UsersInfo(
-      userNo: userIndex,
-      emailTypeId: emailTypeId,
-      passKey: passKey,
-    );
+  
 
-    profileImage = usersInfo.userDb[userIndex][3];
-    nickName = usersInfo.userDb[userIndex][4];
+    profileImage = UsersInfo.userDb[userIndex].userImage;
+    nickName = UsersInfo.userDb[userIndex].userNickName;
   }
 
   @override
@@ -515,7 +511,7 @@ class _AddToDoState extends State<AddToDo> {
       infoSnackBarText,
       snackPosition: SnackPosition.BOTTOM,
       duration: Duration(seconds: 2),
-      backgroundColor: Color(0xFFE9D5FF),
+      backgroundColor: Color(0xFFF9FAFB),
       colorText: Colors.black
       );
   }

@@ -61,14 +61,9 @@ class _EditToDoState extends State<EditToDo> {
     radioIsPrivate = isPrivate ? 0 : 1;
     infoSnackBarText = '';
 
-    UsersInfo usersInfo = UsersInfo(
-      userNo: userIndex,
-      emailTypeId: emailTypeId,
-      passKey: passKey,
-    );
 
-    profileImage = usersInfo.userDb[userIndex][3];
-    nickName = usersInfo.userDb[userIndex][4];
+    profileImage = UsersInfo.userDb[userIndex].userImage;
+    nickName = UsersInfo.userDb[userIndex].userNickName;
   }
 
   @override
