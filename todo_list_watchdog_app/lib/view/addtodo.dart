@@ -201,7 +201,7 @@ class _AddToDoState extends State<AddToDo> {
                             Expanded(
                               child: TextField(
                                 controller: locationController,
-                                maxLength: 10,
+                                maxLength: 20,
                                 decoration: InputDecoration(
                                   labelText: '장소를 입력하세요. (최대 20자)',
                                   labelStyle: TextStyle(fontSize: 13),
@@ -222,7 +222,7 @@ class _AddToDoState extends State<AddToDo> {
                             Expanded(
                               child: TextField(
                                 controller: todoTitleController,
-                                maxLength: 10,
+                                maxLength: 20,
                                 decoration: InputDecoration(
                                   labelText: '제목을 입력하세요. (최대 20자)',
                                   labelStyle: TextStyle(fontSize: 13),
@@ -511,7 +511,7 @@ class _AddToDoState extends State<AddToDo> {
       infoSnackBarText,
       snackPosition: SnackPosition.BOTTOM,
       duration: Duration(seconds: 2),
-      backgroundColor: Color(0xFFF9FAFB),
+      backgroundColor: Color(0xFFE9D5FF),
       colorText: Colors.black
       );
   }

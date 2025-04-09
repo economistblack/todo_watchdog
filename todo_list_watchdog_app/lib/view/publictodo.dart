@@ -304,7 +304,18 @@ class _PublicToDoState extends State<PublicToDo> {
                     return true; // 본인이면 삭제 허용
                   },
                   onDismissed: (direction) {
-                    publicToDoList.removeAt(index); // 안전한 방식
+                    final removedItem = publicToDoList[index];
+
+                    publicToDoList.removeAt(index); // 일정 삭제
+
+                    TodoList.listDb.removeWhere(
+                      (todo) =>
+                          todo.listNo == removedItem.listNo &&
+                          todo.userNo == removedItem.userNo,
+                    );
+
+                    earliestScheduleMessage(); // 상단 메시지 갱신
+                    addMessage = publicToDoList.isEmpty ? '퍼블릭 일정이 없습니다!' : '';
                     setState(() {});
                     Get.snackbar(
                       '',
