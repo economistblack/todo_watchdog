@@ -7,6 +7,7 @@ class MeetUp {
   final String organizerName;
   final DateTime selectedDate;
   final TimeOfDay selectedTime;
+  final String weekDay;
   final Duration meetUpDuration;
   final String meetUpLocation;
   final String mapURL;
@@ -22,6 +23,7 @@ class MeetUp {
     required this.organizerName,
     required this.selectedDate,
     required this.selectedTime,
+    required this.weekDay,
     required this.meetUpDuration,
     required this.meetUpLocation,
     required this.mapURL,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:meetup_register_app/model/meetup.dart';
 import 'package:intl/intl.dart';
+import 'package:meetup_register_app/view/addmeetup.dart';
 
 class RegisterMeetUp extends StatefulWidget {
   final Function(ThemeMode) onChangeTheme;
@@ -17,12 +19,11 @@ class RegisterMeetUp extends StatefulWidget {
 
 class _RegisterMeetUpState extends State<RegisterMeetUp> {
   
-  late int _numOfAttendees;
-
+  
   @override
   void initState() {
     super.initState();
-    _numOfAttendees = 0;
+    
   }
 
   @override
@@ -95,7 +96,7 @@ class _RegisterMeetUpState extends State<RegisterMeetUp> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      '날짜: ${DateFormat('yyyy년 MM월 dd일').format(widget.meetUpList[index].selectedDate)}',
+                                      '날짜: ${DateFormat('yyyy년 MM월 dd일').format(widget.meetUpList[index].selectedDate)} (${widget.meetUpList[index].weekDay})',
                                       style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,
@@ -131,7 +132,9 @@ class _RegisterMeetUpState extends State<RegisterMeetUp> {
               ),
             ),
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                Get.to(AddMeetUP(meetUpList1: widget.meetUpList));
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.secondary,
                 foregroundColor: Theme.of(context).colorScheme.onSecondary,

@@ -19,6 +19,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late String _organizerName;
   late DateTime _selectedDate;
   late TimeOfDay _selectedTime;
+  late String _weekDay;
   late Duration _meetUpDuration;
   late String _meetUpLocation;
   late String _mapURL;
@@ -38,6 +39,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     _organizerName = '디카프리오';
     _selectedDate = DateTime(2025, 04, 23);
     _selectedTime = TimeOfDay(hour: 19, minute: 30);
+    _weekDay = weekdayToString(_selectedDate);
     _meetUpDuration = Duration(hours: 2);
     _meetUpLocation = '스타벅스 가락본동점';
     _mapURL = 'https://maps.app.goo.gl/vyhgS5WzoV6GqP3AA';
@@ -54,6 +56,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       organizerName: _organizerName,
       selectedDate: _selectedDate,
       selectedTime: _selectedTime,
+      weekDay: _weekDay,
       meetUpDuration: _meetUpDuration,
       meetUpLocation: _meetUpLocation,
       mapURL: _mapURL,
@@ -65,6 +68,29 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
+    String weekdayToString(DateTime _selectedDate){
+      String dateName = "";
+      int weekDayIndex = _selectedDate.weekday;
+
+      switch(weekDayIndex){
+        case 1:
+          dateName = "월";
+        case 2:
+          dateName = "화";
+        case 3:
+          dateName = "수";
+        case 4:
+          dateName = "목";
+        case 5:
+          dateName = "금";
+        case 6:
+          dateName = "토";
+        case 7:
+          dateName = "일";
+      }
+    return dateName;
+
+    }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
