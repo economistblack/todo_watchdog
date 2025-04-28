@@ -51,5 +51,9 @@
 	<string>Used to capture audio for image picker plugin</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Used to demonstrate image picker plugin</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>이 앱은 사용자의 위치를 사용합니다.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>이 앱은 항상 사용자의 위치를 사용합니다.</string>
 </dict>
 </plist>
