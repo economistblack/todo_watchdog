@@ -1,6 +1,8 @@
+import 'package:environment_api_app/view/insertimageposition.dart';
 import 'package:environment_api_app/view/restapi.dart';
 import 'package:flutter/material.dart';
 import 'package:environment_api_app/view/map.dart';
+import 'package:get/get.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -29,6 +31,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: Text('공모전 초안'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.to(Insertimageposition());
+            }, 
+            icon: Icon(Icons.add) 
+            ),
+        ],
         bottom: TabBar(
           controller: controller,
           tabs: [

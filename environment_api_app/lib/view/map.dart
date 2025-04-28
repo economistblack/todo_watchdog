@@ -8,8 +8,13 @@ class LakeMap extends StatefulWidget {
 }
 
 class _LakeMapState extends State<LakeMap> {
+  
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      
+
+    );
   }
 }
