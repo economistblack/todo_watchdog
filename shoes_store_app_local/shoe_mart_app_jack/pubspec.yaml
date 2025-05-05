@@ -54,6 +54,10 @@ dependencies:
   latlong2: ^0.9.1
   # Get Strorage
   get_storage: ^2.1.1
+  # intl
+  intl: ^0.20.2
+  # 카카오 주소
+  remedi_kopo: ^0.0.2
 
 dev_dependencies:
   flutter_test:

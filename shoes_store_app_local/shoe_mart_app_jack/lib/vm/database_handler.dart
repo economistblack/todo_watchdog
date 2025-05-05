@@ -9,7 +9,7 @@ class DatabaseHandler {
     return openDatabase(
       join(path, "shoestore.db"),
       onCreate: (db, version) async{
-        await db.execute("create table user(id text primary key, pw text, phone text, adminDate date, address text, name text)"
+        await db.execute("create table user(id text primary key, pw text, name text, phone text, adminDate date, address text)"
         );
         await db.execute(
           '''
@@ -37,11 +37,32 @@ class DatabaseHandler {
       version: 1
     );
 }
-Future<List<User>> queryUserLogin(String id) async {
+  Future<List<User>> queryUserLogin(String id) async {
+      final Database db = await initializeDB();
+      final List<Map<String, Object?>> queryResult = await db.rawQuery(
+        'select * from user where id = ?',
+        [id]
+      );
+      return queryResult.map((e) => User.fromMap(e)).toList();
+    }
+
+  Future<int> insertUser(User user)async{
+    int result = 0;
     final Database db = await initializeDB();
-    final List<Map<String, Object?>> queryResult = await db.rawQuery(
-      'select * from user where id = ?',
+    result = await db.rawInsert(
+      'insert into user(id, pw, name, phone, adminDate, address) values (?, ?, ?, ?, ?, ?)',
+      [user.id, user.pw, user.name, user.phone, user.adminDate, user.address]
     );
-    return queryResult.map((e) => User.fromMap(e)).toList();
+    return result;
+  }
+
+  Future<int> updateUserPassword(String id, String newPassword)async{
+    int result = 0;
+    final Database db = await initializeDB();
+    result = await db.rawUpdate(
+      'update user set pw = ? WHERE id = ?',
+    [newPassword, id]
+    );
+    return result;
   }
 }

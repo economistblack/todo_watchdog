@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shoe_mart_app_jack/view/findid.dart';
+import 'package:shoe_mart_app_jack/view/findpassword.dart';
 import 'package:shoe_mart_app_jack/view/product_display.dart';
 import 'package:shoe_mart_app_jack/view/signup.dart';
 import 'package:shoe_mart_app_jack/vm/database_handler.dart';
@@ -178,7 +180,7 @@ class _LoginState extends State<Login> {
                       TextButton.icon(
                         icon: Icon(Icons.vpn_key),
                         onPressed: () {
-                          
+                          Get.to(FindPassWord());
                         }, 
                         label: Text('비밀번호 찾기')
                         ),
@@ -186,7 +188,7 @@ class _LoginState extends State<Login> {
                       TextButton.icon(
                         icon: Icon(Icons.person_3_outlined),
                         onPressed: () {
-                          
+                          Get.to(FindId());
                         }, 
                         label: Text('아이디 찾기')
                         ),
@@ -216,7 +218,7 @@ class _LoginState extends State<Login> {
     Get.defaultDialog(
       title: '환영합니다.',
       middleText: message,
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      backgroundColor: Colors.blue,
       barrierDismissible: false,
       actions: [
         TextButton.icon(
