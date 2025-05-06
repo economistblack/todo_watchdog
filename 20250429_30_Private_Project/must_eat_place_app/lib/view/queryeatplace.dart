@@ -19,6 +19,7 @@ class _QueryeatplaceState extends State<Queryeatplace> {
   DatabaseHandler handler = DatabaseHandler();
   TextEditingController searchController = TextEditingController();
   int eatPlaceCount = 0;
+  int favoriteOnlyCount = 0;
   List<Eatplace> filteredData = [];
   bool isSearching = false;
   bool showOnlyFavorite = false;
@@ -52,7 +53,10 @@ class _QueryeatplaceState extends State<Queryeatplace> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '내가 경험한 맛집 리스트 : $eatPlaceCount 항목',
+                  (showOnlyFavorite) ?
+                  ('나의 즐겨찾기 맛집 : $favoriteOnlyCount 항목')
+                  :
+                  ('내가 경험한 맛집 리스트 : $eatPlaceCount 항목'),
                   style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white,
                   shadows: [
                     Shadow(
@@ -103,6 +107,7 @@ class _QueryeatplaceState extends State<Queryeatplace> {
             IconButton(
               onPressed: () {
                  showOnlyFavorite = !showOnlyFavorite; 
+                 favoriteOnlyLength();
                  setState(() {});
               },
               icon: Icon(
@@ -382,5 +387,11 @@ class _QueryeatplaceState extends State<Queryeatplace> {
     eatPlaceCount = data.length;
     setState(() {
     });
+  }
+
+  favoriteOnlyLength() async{
+    final data = await handler.queryFavoriteOnly();
+    favoriteOnlyCount = data.length;
+    setState(() {});
   }
 } // class
