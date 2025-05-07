@@ -122,5 +122,15 @@ Future<int> insertEmployee(Employee employee)async{
     );
   }
 
+  Future<int> updateEmployee(Employee employee)async{
+    int result = 0;
+    final Database db = await initializeDB();
+    result = await db.rawUpdate(
+      'update employee set employeeNo = ?, pw = ?, name = ?, employeeDate = ?, position = ?, authority = ?, storeCode =?',
+      [employee.employeeNo, employee.pw, employee.name, employee.employeeDate, employee.position, employee.authority, employee.storeCode]
+    );
+    return result;
+  }
+
 
 }
