@@ -6,12 +6,12 @@ class Product {
   final String detailCode; // 컬러(2),size(3) - 자리 수
   final String productName;
   final int quantity;
-  final String color; // black(20), white(21), red(22), grey(23), blue(24)
+  final String color; // black(20), white(21), red(22K), grey(23), blue(24)
   final String rating;
   final int marginRate;
   final int price;
   final int size; // 220 - 300 (10 단위)
-  final Uint8List image; // 이미지는 알아서 찾으세요 ^^
+  final Uint8List? image; // 이미지는 알아서 찾으세요 ^^
   final String description;
   final String category; // 운동화 01, 구두 02, 슬리퍼 03, 단화 04
   final String productionYear;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shoe_team_project/login.dart';
+import 'package:shoe_team_project/view/login.dart';
 
 void main() {
   runApp(const MyApp());

@@ -8,7 +8,7 @@ class Basket {
   final int buyProductQuantity;
   final String userid;
   final Uint8List image;
-  final int ischeck;
+  int ischeck;
 
 
   Basket({
